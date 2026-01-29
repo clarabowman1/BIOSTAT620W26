@@ -1,0 +1,158 @@
+---
+title: "Lab3"
+author: "Clara Bowman"
+format: html
+editor: visual
+---
+
+```{r}
+library(leaflet)
+library(lubridate)
+library(dplyr)
+```
+
+### **1. Read in the data**
+
+```{r}
+met <- read.csv("met_all.gz")
+```
+
+### 2. Check Dimensions
+
+```{r}
+dim(met)
+```
+
+There are 2377343 rows and 30 columns
+
+### 3. Look at all the variables
+
+```{r}
+str(met)
+```
+
+### 4. Closer Look at Key Variables
+
+```{r}
+summary(met[,c('year','day','hour', 'temp', 'elev', 'wind.sp')])
+```
+
+```{r}
+met$elev[met$elev == 9999] <- NA
+summary(met$elev)
+```
+
+The highest elevation is at 4113
+
+```{r}
+met$temp[met$temp == -40] <- NA
+met <- met[!is.na(met$temp),]
+summary(met$temp)
+```
+
+### 5. Check Data
+
+```{r}
+low_temp <- met[met$temp < -10,c('year','month','day','temp','lon','lat')]
+low_temp
+```
+
+-17.2 was recorded in August 2019 at (38.767, -104.3) for several days. This is in the desert in Colorado where the record low ever was -8˚F, so -17.2 is impossible. The other weather station recording -17˚ is in Southern Texas where such low temperatures in Texas are not possible
+
+```{r}
+co <- met[met$lon == -104.300,c('year','month','day','temp','lon','lat')]
+co
+```
+
+```{r}
+tx <- met[met$lon == -98.052,c('year','month','day','temp','lon','lat')]
+tx
+```
+
+For both weather stations with temperatures of -17, these values are highly different from readings on surrounding days. For the Colorado station, it is possible that the negative sign is the only mistake (should be +17.2) but we cannot confirm this, so I will remove all values less than -10.
+
+```{r}
+met <- met[met$temp>-10,]
+summary(met$temp)
+```
+
+```{r}
+low_elev <- met[met$elev<0,c('year','month','day','elev','lon','lat')]
+summary(low_elev)
+```
+
+There is one weather station with elevation below 0 at (32.83, -115.7). This is in Southern California, in the Imperial Valley which is below sea level, so this makes sense.
+
+```{r}
+high_elev <- met[met$elev>4000,c('year','month','day','elev','lon','lat','wind.sp','temp','hour')]
+high_elev <- high_elev[!is.na(high_elev$elev),]
+summary(high_elev)
+```
+
+There is one weather station with elevation above 4000m at (39.8, -105.8). This is in a mountainous area in Colorado where the elevation is this high, so this makes sense
+
+### 6. Summary Stats
+
+```{r}
+high_elev <- high_elev[!is.na(high_elev$wind.sp),]
+summary(high_elev)
+```
+
+```{r}
+cor_matrix <- cor(high_elev[,c('day','hour','temp','wind.sp')])
+cor_matrix 
+```
+
+There is not a strong linear correlation between day and hour or temp, and between hour and temp. There appears to be a moderate correlation between hour and temperature (r=0.435) and day and windspeed (r=0.364). However, this is only looking at linear relationships and does not address the fact that temperatures generally follow day long cycles (warmest mid-day).
+
+### 7. Exploratory Graphs
+
+```{r}
+leaflet(high_elev) %>%
+  addProviderTiles('OpenStreetMap') %>% 
+  addCircles(lat=~lat,lng=~lon, opacity=1, fillOpacity=1, radius=100)
+```
+
+```{r}
+high_elev$date <- with(high_elev, ymd_h(paste(year, month, day, hour, sep= ' ')))
+summary(high_elev$date)
+high_elev <- high_elev[order(high_elev$date), ]
+head(high_elev)
+```
+
+```{r}
+plot(high_elev$date,high_elev$temp,xlab='Date',ylab='Temperature (˚C)',main='Temperature at Highest Elevation')
+```
+
+```{r}
+plot(high_elev$date,high_elev$wind.sp,xlab='Date',ylab='Windspeed',main='Windspeed at Highest Elevation')
+```
+
+There is not a clear trend between date and temperature or windspeed. High values tend to be pooled together, so it is not completely random.
+
+### 8. Ask Questions
+
+```{r}
+met_daily <- summarize(met,
+                       temp=min(temp),
+                       elev=mean(elev),
+                       .by = c(USAFID,day))
+summary(met_daily)
+```
+
+```{r}
+met_daily <- met_daily[!is.na(met_daily$temp),]
+mod <- lm(temp ~ elev, data = met_daily)
+plot(temp ~ elev, data = met_daily,
+     pch = 19, cex = 0.5,
+     main = "Daily Low Temperature and Elevation",
+     xlab = "Elevation",
+     ylab = "Daily Low Temperature (°C)")
+abline(mod, lwd = 2, col = "red")
+```
+
+```{r}
+summary(mod)
+```
+
+There is a negative association between elevation and daily low temperature. Stations at are expected to have about a 4.188 degree lower daily low for every 1000 meters higer in elevation
