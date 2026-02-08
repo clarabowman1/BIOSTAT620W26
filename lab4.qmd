@@ -1,0 +1,182 @@
+---
+title: "lab4"
+format: html
+editor: visual
+embed-resources: true
+---
+
+```{r}
+library(dplyr)
+library(lubridate)
+library(ggplot2)
+library(ggpattern)
+library(ggridges)
+```
+
+## 1. Read Data
+
+```{r}
+if (!file.exists("covid_processed.csv"))
+  download.file(
+    url = "https://raw.githubusercontent.com/dmcable/BIOSTAT620W26/main/data/covid/covid_processed.csv",
+    destfile = "covid_processed.csv",
+    method   = "libcurl",
+    timeout  = 60
+    )
+covid <- read.csv('covid_processed.csv')
+head(covid)
+```
+
+## 2. Prepare Data
+
+Scale Data
+
+```{r}
+covid <- covid %>%
+  mutate(
+    cases = (cases*100000)/pop,
+    hosp = (hosp*100000)/pop,
+    booster = (booster*100000)/pop,
+    series = (series*100000)/pop,
+    deaths = (deaths*100000)/pop,
+    date = ymd(date)
+  )
+tail(covid)
+```
+
+Create binary for population
+
+```{r}
+covid$pop_binary <- as.factor(covid$pop > median(covid$pop))
+summary(covid$pop_binary)
+```
+
+Create state averages
+
+```{r}
+state_avg <- covid %>%
+  group_by(state, state_name, region, region_name, pop_binary) %>%
+  summarise(
+    avg_cases = mean(cases),
+    avg_hosp = mean(hosp),
+    avg_booster = mean(booster),
+    avg_series = mean(series),
+    avg_deaths = mean(deaths),
+    pop = first(pop)
+  )
+head(state_avg)
+dim(state_avg)
+```
+
+```         
+```
+
+Make sure region is a factor
+
+```{r}
+covid$region <- as.factor(covid$region)
+summary(covid$region)
+```
+
+## 3. Violin Plot to Examine Case and Death Rates by Region
+
+```{r}
+ggplot(data = covid) + 
+  geom_violin(mapping = aes(x=1, y=cases, fill=region)) + 
+  facet_wrap(~ region, nrow = 1)
+  
+```
+
+```{r}
+ggplot(data = covid) + 
+  geom_violin(mapping = aes(x=1, y=deaths, fill=region)) + 
+  facet_wrap(~ region, nrow = 1)
+```
+
+## 4. Time and Case Rates by Region
+
+```{r}
+after_two_weeks<- covid %>%
+  filter(mmwr_week > 2 | mmwr_year==2021)
+ggplot(data=after_two_weeks, mapping = aes(x=date, y=cases, color=region, alpha=0.5)) +
+  geom_point() +
+  stat_smooth(se=FALSE, span=0.1)
+```
+
+All regions follow similar trends and have peaks in late 2020 and 2021. Lm creates a linear model which does not accurately reflect the data.
+
+## 5. Barplots of States by Population Category
+
+```{r}
+ggplot(data=state_avg) + 
+  geom_bar(mapping = aes(x=pop_binary, fill=region_name), position='dodge') + scale_fill_brewer(palette='Set3')
+```
+
+Midwest and Southeast have the most states above median population. New England and Mountain states have the most states above median population.
+
+## 6. **Use `stat_summary` to examine mean vaccination rate and death rate by region with standard deviation error bars**
+
+```{r}
+ggplot(state_avg, aes(x = region_name, y = avg_series))+ 
+  stat_summary(fun = mean, geom = "point", size = 3) +
+  stat_summary(fun.data = "mean_sdl", geom = "errorbar", width = 0.2) +
+  labs(title = "Mean Vaccination Rate by region")
+
+```
+
+```{r}
+ggplot(state_avg, aes(x = region_name, y = avg_deaths))+ 
+  stat_summary(fun = mean, geom = "point", size = 3) +
+  stat_summary(fun.data = "mean_sdl", geom = "errorbar", width = 0.2) +
+  labs(title = "Mean Death Rate by region")
+
+```
+
+There does not seem to be a strong relationship between death rate and vaccination rate by region looking at average state values alone.
+
+## 7. Map of Spatial Trend
+
+state_avg \<- state_avg %\>% arrange(desc(avg_deaths))
+
+top_10_states \<- list(state_avg\[1:10,"state_name"\])
+
+top_10_states
+
+```{r}
+
+```
+
+```{r}
+
+state_avg <- state_avg %>%
+  arrange(desc(avg_deaths)) %>%
+  mutate(top_10 = row_number() <= 10,
+         region = tolower(state_name))
+state_avg$region <- tolower(state_avg$state_name)
+us_map <-map_data("state")
+us_map <- left_join(us_map, state_avg, by="region")
+ggplot(data = us_map, aes(x = long, y = lat, group = group)) +
+  geom_polygon_pattern(
+    aes(fill = avg_deaths, pattern = top_10),
+    color = "black",
+    size = 0.2,
+    pattern = "stripe",
+    pattern_fill = "black",
+    pattern_density = 0.2,
+    pattern_spacing = 0.02
+  ) +
+  scale_fill_gradient2(
+    low = "darkblue",
+    high = "tomato",
+    midpoint = mean(state_avg$avg_deaths, na.rm = TRUE)
+  ) +
+  coord_fixed(1.35)
+```
+
+## 8. Use gg extension (ggridges)
+
+```{r}
+ggplot(covid, aes(x = hosp, y = region_name, fill = stat(x))) +
+  geom_density_ridges_gradient(scale = 3, rel_min_height = 0.01) +
+  scale_fill_viridis_c(name = "Hospitalizations", option = "C") 
+```
