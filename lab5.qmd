@@ -1,0 +1,145 @@
+---
+title: "lab5"
+author: "Clara Bowman"
+format: html
+editor: visual
+embed-resources: true
+---
+
+```{r}
+library(dplyr)
+library(data.table)
+library(tidyverse)
+library(tidyr)
+library(dtplyr)
+library(stringr)
+library(janitor)
+library(jsonlite)
+library(httr2)
+library(lubridate)
+```
+
+## Population Data
+
+Load Data
+
+```{r}
+url <- 'https://raw.githubusercontent.com/dmcable/BIOSTAT620W26/main/data/covid/population.csv'
+if (!file.exists("covid_processed.csv"))
+  download.file(
+    url = url,
+    destfile = "population.csv",
+    method   = "libcurl",
+    timeout  = 60
+    )
+population <- read.csv('population.csv', header=TRUE)
+head(population)
+```
+
+Make first row header
+
+```{r}
+colnames(population) <- population[1,]
+population <- population[-1,]
+rownames(population) <- NULL
+head(population)
+```
+
+Select columns, rename and pivot longer
+
+```{r}
+population <- population %>%
+  select(state_name = NAME, POP_2020, POP_2021) %>% 
+  pivot_longer(-state_name, names_to = 'year', values_to = 'population')
+head(population)
+```
+
+Extract year and add state abbreviations
+
+```{r}
+population$year <- as_factor(str_sub(population$year, -4, -1))
+head(population)
+```
+
+```{r}
+unique(population$state_name)
+```
+
+Add state abbreviation
+
+```{r}
+state_map <- setNames(state.abb, state.name)
+state_map['District of Columbia'] = "DC"
+state_map['Puerto Rico'] = 'PR'
+population <- population %>%
+  mutate(state = recode(state_name, !!!state_map))
+population$state
+```
+
+## Regions Data
+
+```{r}
+url <- "https://github.com/datasciencelabs/2024/raw/refs/heads/main/data/regions.json"
+regions <- fromJSON(url)
+head(regions)
+```
+
+Unnest region and states, and rename states column
+
+```{r}
+regions <- unnest(regions,cols=c('region','states'))
+regions <- rename(regions, state_name=states)
+head(regions)
+```
+
+Join population and regions
+
+```{r}
+population <- left_join(population, regions, by='state_name')
+head(population)
+```
+
+## COVID Data
+
+```{r}
+api <- "https://data.cdc.gov/resource/pwn4-m3yp.json"
+request <- request(paste0(api,paste0("?$limit=10000000000")))
+response <- request |> req_perform() |> resp_body_string()
+cases_raw <- fromJSON(response)
+head(cases_raw)
+```
+
+```{r}
+cases <- cases_raw %>%
+  select(
+    state,
+    date=end_date,
+    cases=new_cases,
+  ) 
+cases$date <- ymd_hms(cases$date)
+head(cases)
+```
+
+```{r}
+unique(cases$state)
+```
+
+There a several "state abbreviations" that are not typical state abbreviations (NYC, AS, FSM, GU, MP, PW, RMI, VI)
+
+NYC likely refers to New York City, so it can be added to New York
+
+AS (American Samoa), FSM (Micronesia), GU (Guam), MP (Mariana Islands), PW (Palau), RMI (Marshall Islands), and VI (Virgin Islands) are territories not included in the populations data set, so I will remove them before merging.
+
+```{r}
+cases$state <- ifelse(cases$state == 'NYC', 'NY', cases$state)
+territories = c('AS','FSM','GU','MP','PW','RMI','VI')
+cases = cases[!(cases$state %in% territories),]
+unique(cases$state)
+```
+
+```{r}
+cases$year <- as.factor(year(cases$date))
+cases <- cases[cases$year == 2021 | cases$year == 2020,]
+cases <- left_join(cases, population, by=c('state','year'))
+head(cases)
+```
