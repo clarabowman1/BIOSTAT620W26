@@ -1,0 +1,293 @@
+---
+title: "HW1"
+author: "Clara Bowman"
+format: html
+editor: visual
+embed-resources: true
+---
+
+```{r}
+library(dplyr)
+library(leaflet)
+library(ggplot2)
+library(stringr)
+library(maps)
+```
+
+## 1. EDA Steps 1-5
+
+Read in data
+
+```{r}
+pm_2005 <- read.csv("pm2.5_2005.csv")
+pm_2025 <- read.csv("pm2.5_2025.csv")
+```
+
+Check Dimensions
+
+```{r}
+print(dim(pm_2005))
+print(dim(pm_2025))
+```
+
+Check Summaries
+
+```{r}
+summary(pm_2005)
+```
+
+```{r}
+summary(pm_2025)
+```
+
+Plot distributions of PM2.5
+
+```{r}
+par(mfrow = c(1, 2))
+hist(pm_2005$Daily.Mean.PM2.5.Concentration, main = "Distribution of PM2.5 in 2005", xlab = "µg/m³", ylab = "Frequency", col = "lightblue", breaks=20)
+hist(pm_2025$Daily.Mean.PM2.5.Concentration, main = "Distribution of PM2.5 in 2025", xlab = "µg/m³", ylab = "Frequency", col = "darkblue", breaks=20)
+```
+
+Compare sites in 2005 and 2025
+
+```{r}
+sites_2005 = unique(pm_2005$Site.ID)
+length(sites_2005)
+sites_2025 = unique(pm_2025$Site.ID)
+length(sites_2025)
+length(setdiff(sites_2005,sites_2025))
+```
+
+Both dataframes have 22 columns and the same variables including the daily PM2.5 value, information about the collection site, collection date etc. 2025 has more rows (observations) than 2005: 9934 vs 5280. However, there are more sites in 2005: 34 vs 27. Each observation represents a single collection (only one collection per day). Looking at variable summaries, the only missing data is Method.Code in 2025 with 2543 missing values. The PM2.5 values are skewed right both years. PM2.5 levels tended to be higher in 2005 than 2025 with median values of 11.0 and 6.3 respectively.
+
+## 2. Join Years
+
+Create Year Column
+
+```{r}
+pm <- rbind(pm_2005,pm_2025)
+pm$Year <- as.factor(substr(pm$Date,7,10))
+summary(pm$Year)
+```
+
+Rename Columns
+
+```{r}
+pm <- pm %>%
+  rename(
+    Lat = Site.Latitude,
+    Lon = Site.Longitude,
+    PM2.5 = Daily.Mean.PM2.5.Concentration
+  )
+```
+
+## 3. Plot Sites by Year
+
+```{r}
+#contains distinct combinations of SiteID and Year 
+sites <- pm %>%
+  distinct(Site.ID, Year, Lon, Lat)
+pal <- colorFactor(palette = c("magenta", "cyan"), 
+  domain = sites$Year)
+sitemap <- leaflet(sites) %>%
+  addTiles() %>%
+  addCircleMarkers(
+    lat = ~Lat, lng = ~Lon, stroke = FALSE,
+    color = ~pal(Year), opacity = 1, fillOpacity = 0.5, radius = 8) %>%
+  addLegend('bottomleft', pal=pal, values=~Year,
+          title='Year') %>%
+    addControl(
+    html = "<h3>Monitoring Sites by Year</h3>",
+    position = "topright"
+  )
+sitemap
+  
+```
+
+There is a similar distribution across the two years. Quite a few sites are shared across the two years (lavender). There are more sites that were in 2005 only (magenta) than in 2025 only (cyan).
+
+## 4. Check Data
+
+```{r}
+print(summary(pm))
+```
+
+The only missing data is method codes. The maximum PM2.5 level is 116 which is very high. The threshold for "healthy air" is 35, so it is worth investigating these very high values
+
+```{r}
+highpm <- pm %>%
+  filter(PM2.5 > 70) %>%
+  arrange(Year,Date) %>% 
+  select(Year, Date, PM2.5, Daily.AQI.Value, Local.Site.Name, County)
+print(highpm)
+```
+
+All the high values in 2005 are between February 3-5 when there was an air quality warning: <https://www.sciencedirect.com/science/chapter/bookseries/abs/pii/S1474817707060524>
+
+On June 2, 2025 there was an air quality advisory due to Canadian wildfires:
+
+<https://www.freep.com/story/news/2025/06/02/air-quality-index-advisory-michigan-canada-wildfires-smoke-plumes/83987434007/?gnt-cfr=1&gca-cat=p&gca-uir=true&gca-epti=z112724p000250c000250v112724d--44--b--44--&gca-ft=175&gca-ds=sophi>
+
+In late July there was a similar advisory:
+
+<https://www.lansingstatejournal.com/story/news/local/michigan/2025/07/25/michigan-air-quality-canadian-wildfire-smoke-pollution-forecast/85370636007/>
+
+Therefore, all the values are plausible. Additionally, the AQIs (air quality indices) are very high for these dates, so it is unlikely that the high PM2.5 values are due to measurement errors.
+
+#### Investigate Methods
+
+```{r}
+methods <- read.csv("methods_speciation.csv")
+ggplot(data = pm) + 
+  geom_bar(mapping = aes(x=as.character(Method.Code), fill = as.factor(Year))) +
+  labs(title='Method Code By Year (2005 and 2025)',x = "Method Code", y="Count") + 
+  theme_bw()
+
+print(pm %>% group_by(Year) %>% summarize(prop_na = mean(is.na(Method.Code))))
+```
+
+Almost all collections in 2005 were code 118 while collections in 2025 had more diverse methods with 636 being used the most. Method code 707 was the only one that was utilized in both years. All missing code entries are from 2025 (about 26% percent of entries). One possible explanation for this is that recent measurements (2025) utilize new methods without a method code yet.
+
+```{r}
+print(pm %>% count(Method.Code,AQS.Parameter.Code))
+```
+
+Each Method Code has a unique corresponding parameter code, so we can investigate the most common methods.
+
+```{r}
+print(methods[(methods$Method.Code==118 | methods$Method.Code==636) & methods$Parameter.Code == 88101,])
+```
+
+The two most common methods (most common method for each year) both use the same parameter (PM2.5 - Local Conditions) and have the same units, but vary in collection and analysis method.
+
+## 5. Explore Question
+
+#### 1. Has PM2.5 Concentration Changed in the State of Michigan Over Time?
+
+```{r}
+ggplot(data=pm, aes(x=Year, y=PM2.5, fill=Year)) +
+  geom_boxplot() + 
+  labs(title = "PM2.5 Measurements by Year", y="PM2.5 (µg/m³)") +
+  theme_bw()
+```
+
+```{r}
+print(t.test(PM2.5 ~ Year, data = pm))
+print(pm %>%
+  group_by(Year) %>%
+    summarize(
+    mean_pm2.5 = mean(PM2.5),
+    sd_pm2.5 = sd(PM2.5),
+    min_pm2.5 = min(PM2.5),
+    max_pm2.5 = max(PM2.5)
+  ))
+  
+  
+```
+
+On average, PM2.5 levels were higher in 2005 (mean = 13.77 µg/m³) than 2025 (mean = 8.31 µg/m³) in Michigan. This reflects an approximately 40% decrease in mean PM2.5 levels; this difference is statistically significant (p\<0.05). However, 2025 had higher recorded values (max = 116 µg/m³) than 2005 (max = 81.6 µg/m³).
+
+#### 2. Has PM2.5 Concentration Changed in the State of Michigan by County Over Time?
+
+```{r}
+county_summary <- pm %>%
+  group_by(County) %>%
+  summarise(
+    n_2005 = sum(Year == '2005'),
+    n_2025 = sum(Year == '2025'),
+    mean_2005 = mean(PM2.5[Year=='2005']),
+    mean_2025 = mean(PM2.5[Year=='2025']),
+    sd_2005 = sd(PM2.5[Year=='2005']),
+    sd_2025 = sd(PM2.5[Year=='2025']),
+    pct_change = if(mean_2005 != 0 & !is.na(mean_2005) & !is.na(mean_2025)){
+      100 * (mean_2025 - mean_2005) / mean_2005
+    } else {
+      NA_real_
+    },
+    p_value = if (n_2005 >= 2 & n_2025 >=2){
+      t.test(PM2.5[Year=='2005'],PM2.5[Year=='2025'])$p.value
+    } else {
+      NA_real_
+    },
+    significant = p_value < 0.05,
+    .groups = 'drop'
+  ) %>% arrange(desc(pct_change))
+county_summary
+```
+
+```{r}
+# Retrieve Michigan county data
+mi_counties <- map_data("county", "michigan") %>%
+  select(lon = long, lat, group, County = subregion) %>%
+  mutate(County = str_to_sentence(County))
+#Join with County Summaries
+mi_counties <- left_join(mi_counties, county_summary, by="County")
+# Plot using geom_polygon
+ggplot(mi_counties, aes(x = lon, y = lat, group = group)) +
+  geom_polygon(aes(fill = pct_change), color = "black") +
+  scale_fill_gradient2(
+    low = "blue",
+    mid = "white",
+    high = "tomato",
+    midpoint = 0,
+    na.value = "grey80",   # ← NA color here
+    name = "% change"
+  ) +
+  coord_fixed(1.3) +
+  theme_minimal()
+```
+
+Only 15 counties had measurements in both 2005 and 2025. 7 counties (Berrien, Chippewa, Dickinson, Iron, Monroe, Muskegon, Saginaw) only had measurements in 2005 while 3 counties (Lenawee, Manistee and Marquette) only had measurements in 2005. Of the counties that had measurements both years, all but Schoolcraft county had decreased average PM2.5 levels in 2025 vs 2005. The differences spanned from about a 30% decrease in Allegan to an approximately 60% decrease in PM2.5 in Keweenaw County. All decreases in mean PM2.5 levels were statistically significant (p\<0.05). On the other hand, Schoolcraft County had a 18.1% increase in mean PM2.5 levels from 2005 to 2025, however this increase is not statistically significant (p = 0.138).
+
+#### 3. Has PM2.5 Concentration Changed in the Wayne County by Site Over Time?
+
+```{r}
+wayne_summary <- pm %>%
+  filter(County=="Wayne") %>%
+  group_by(Site.ID,Local.Site.Name) %>%
+  summarise(
+    n_2005 = sum(Year == '2005'),
+    n_2025 = sum(Year == '2025'),
+    mean_2005 = mean(PM2.5[Year=='2005']),
+    mean_2025 = mean(PM2.5[Year=='2025']),
+    sd_2005 = sd(PM2.5[Year=='2005']),
+    sd_2025 = sd(PM2.5[Year=='2025']),
+    pct_change = if(mean_2005 != 0 & !is.na(mean_2005) & !is.na(mean_2025)){
+      100 * (mean_2025 - mean_2005) / mean_2005
+    } else {
+      NA_real_
+    },
+    p_value = if (n_2005 >= 2 & n_2025 >=2){
+      t.test(PM2.5[Year=='2005'],PM2.5[Year=='2025'])$p.value
+    } else {
+      NA_real_
+    },
+    significant = p_value < 0.05,
+    .groups = 'drop'
+  ) %>% arrange(desc(pct_change))
+wayne_summary
+```
+
+```{r}
+complete_wayne_sites <- wayne_summary %>%
+  filter(n_2005>0 & n_2025>0) %>%
+  pull(Local.Site.Name)
+complete_wayne_sites
+```
+
+```{r}
+wayne_plot<- pm %>%
+  filter(Local.Site.Name %in%complete_wayne_sites) %>%
+  ggplot(aes(x=Year, y=PM2.5, fill=Year)) +
+  geom_boxplot() +
+  facet_wrap(~ Local.Site.Name) + 
+  theme_minimal() + 
+  labs(x = "Year", y = "PM2.5 (µg/m³)",title="PM2.5 Concen")
+wayne_plot
+```
+
+Only 4 sites in Wayne County had collected PM2.5 levels in both 2005 and 2025: Allen Park, Southwest Detroit, East 7 Mile, and Dearborn Public Schools. All 4 sites showed a statistically significant decrease (p\<0.05) in mean PM2.5 levels from 2005 to 2025. The decrease ranged from about 46% (Southwest Detroit) to 54% (East 7 Mile). This is a greater percent change than the state average across the two years (40%).
+
+#### Conclusions
+
+On average, PM2.5 levels **decreased** from 2005 to 2025 in Michigan on a state, county and site (Wayne County) level. However, there were some exceptions such as the highest maximum PM2.5 level occuring in 2025 and Schoolcraft County having higher PM2.5 levels in 2025 than 2005. The analysis on county and site levels was limited by unavailable data in one of the two years. Only counties/sites with data in both 2005 and 2025 were used. In future analysis, nearby sites with data in one of the years could be matched to have further data points.
