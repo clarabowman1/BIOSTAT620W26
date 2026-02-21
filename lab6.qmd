@@ -1,0 +1,132 @@
+---
+title: "lab6"
+author: "Clara Bowman"
+format: html
+editor: visual
+embed-resources: true
+---
+
+```{r}
+#knitr::opts_chunk$set(eval = TRUE, include  = TRUE)
+library(tidytext)
+library(dplyr)
+library(ggplot2)
+library(tm)
+library(wordcloud)
+library(tidyverse)
+library(SnowballC)
+```
+
+```{r}
+mt <- read.csv('mtsamples.csv')
+```
+
+## **Question 1: What specialties do we have?**
+
+```{r}
+mt %>%
+  count(medical_specialty,sort=TRUE)
+```
+
+Each category seems to belong to a distinct medical specialty without much overlap. The number of rows for each specialty are not evenly distributed.
+
+## **Question 2: Most common words in transcript**
+
+```{r}
+transcript_tokens <- mt %>%
+  unnest_tokens(token, transcription) %>%
+  count(token) %>%
+  arrange(desc(n)) %>%
+  slice_head(n=20)
+wordcloud(transcript_tokens$token, transcript_tokens$n, colors = brewer.pal(8, "Dark2"),
+          random.order = FALSE, scale=c(10,0.5))
+```
+
+This makes sense. Most of the words are stop words (common in English). "Patient" is the only evidently relevant word, but it is still generic given the context, so we can't analyze it much.
+
+## **Question 3: Remove stop words**
+
+```{r}
+tokens_no_stop <- mt %>%
+  unnest_tokens(token, transcription) %>%
+  anti_join(stop_words, by = c("token" = "word")) %>%
+  filter(!grepl('[0-9]', token)) %>%
+  count(token) %>%
+  arrange(desc(n)) %>%
+  slice_head(n=20)
+wordcloud(tokens_no_stop$token, tokens_no_stop$n, colors = brewer.pal(8, "Dark2"),
+          random.order = FALSE, scale=c(10,0.5))
+```
+
+The words here are more specific medicial words and give us a better idea what the text is about.
+
+## **Question 4: Tokenize into bi-grams**
+
+```{r}
+bi_grams <- mt %>%
+  unnest_ngrams(bigram, transcription, n=2) %>%
+  count(bigram) %>%
+  arrange(desc(n)) %>%
+  slice_head(n=20) %>%
+  ggplot(aes(n,fct_reorder(bigram, n))) +
+  geom_col() + 
+  labs(x='Bi-Gram', title = "Top 20 Bi-Grams")
+bi_grams
+```
+
+#### And Tri-grams
+
+```{r}
+tri_grams <- mt %>%
+  unnest_ngrams(trigram, transcription, n=3) %>%
+  count(trigram) %>%
+  arrange(desc(n)) %>%
+  slice_head(n=20) %>%
+  ggplot(aes(n,fct_reorder(trigram, n))) +
+  geom_col() + 
+  labs(x='Tri-Gram', title = "Top 20 Tri-Grams")
+tri_grams
+```
+
+The trigrams seem to be more situation specific that the bigrams. The frequency of the most common bigrams is also much greater than the trigrams.
+
+## 5. Count words before or after "patient"
+
+```{r}
+around_patient <- mt %>%
+  unnest_ngrams(bigram, transcription, n=2) %>%
+  separate(bigram, into = c('word1','word2')) %>%
+  select(word1, word2) %>%
+  filter(word1=='patient' | word2=='patient') %>%
+  mutate(word=if_else(word1=='patient',word2,word1)) %>%
+  count(word) %>%
+  arrange(desc(n)) %>%
+  slice_head(n=20) %>%
+  ggplot(aes(n,fct_reorder(word, n))) +
+  geom_col() + 
+  labs(x='Word', title = "Top 20 Words Before or after 'patient'")
+around_patient
+```
+
+```{r}
+top_by_specialty <- mt %>%
+  unnest_tokens(token, transcription) %>%
+  anti_join(stop_words, by = c("token" = "word")) %>%
+  filter(!grepl('[0-9]', token)) %>%
+  count(medical_specialty, token, sort = TRUE) %>%
+  group_by(medical_specialty) %>%
+  slice_max(n, n = 5)
+
+ggplot(top_by_specialty, 
+       aes(x = reorder_within(token, n, medical_specialty), 
+           y = n)) +
+  geom_col() +
+  facet_wrap(~ medical_specialty, scales = "free") +
+  scale_x_reordered() +
+  coord_flip() +
+  labs(
+    title = "Top 5 Words by Medical Specialty",
+    x = "Word",
+    y = "Count"
+  )
+```
