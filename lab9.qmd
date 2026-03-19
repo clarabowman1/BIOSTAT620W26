@@ -1,0 +1,204 @@
+---
+title: "lab9"
+author: "Clara Bowman"
+format: html
+editor: visual
+---
+
+```{r warning=FALSE}
+#install.packages(c("RSQLite", "DBI"))
+library(RSQLite)
+library(DBI)
+
+# Initialize a temporary in memory database
+con <- dbConnect(SQLite(), ":memory:")
+
+# Download tables
+doctor <- read.csv("https://raw.githubusercontent.com/dmcable/BIOSTAT620W26/main/data/hospital/doctor.csv")
+visit <- read.csv("https://raw.githubusercontent.com/dmcable/BIOSTAT620W26/main/data/hospital/visit.csv")
+patient <- read.csv("https://raw.githubusercontent.com/dmcable/BIOSTAT620W26/main/data/hospital/patient.csv")
+payment <- read.csv("https://raw.githubusercontent.com/dmcable/BIOSTAT620W26/main/data/hospital/payment.csv")
+
+# Copy data.frames to database
+dbWriteTable(con, "doctor", doctor)
+dbWriteTable(con, "visit", visit)
+dbWriteTable(con, "patient", patient)
+dbWriteTable(con, "payment", payment)
+```
+
+```{r}
+dbListTables(con)
+```
+
+```{sql connection=con}
+PRAGMA table_info(doctor)
+```
+
+## Exercise 1
+
+```{sql connection=con}
+SELECT doctor_id, first_name, last_name
+FROM doctor
+ORDER by last_name, first_name
+```
+
+## Exercise 2
+
+```{sql connection=con}
+SELECT doctor_id, first_name, last_name
+FROM doctor
+WHERE last_name IN ('WILLIAMS', 'DAVIS')
+```
+
+## Exercise 3
+
+```{sql connection=con}
+PRAGMA table_info(visit)
+```
+
+```{sql connection=con}
+SELECT DISTINCT patient_id
+FROM visit
+WHERE date(visit_start_date) = '2005-07-05'
+```
+
+## Exercise 4
+
+### 4.1
+
+```{sql connection=con}
+PRAGMA table_info(payment)
+```
+
+```{sql connection=con}
+SELECT *
+FROM payment
+WHERE amount IN (199, 799, 999)
+```
+
+### 4.2
+
+```{sql connection=con}
+SELECT * 
+FROM payment
+WHERE amount > 500
+```
+
+### 4.3
+
+```{sql connection=con}
+SELECT *
+FROM payment
+WHERE amount > 500 AND amount < 800
+```
+
+## Exercise 5
+
+```{sql connection=con}
+SELECT payment_id, amount
+FROM payment
+INNER JOIN patient ON payment.patient_id = patient.patient_id
+WHERE last_name = 'DAVIS'
+```
+
+## Exercise 6
+
+### 6.1
+
+```{sql connection=con}
+SELECT COUNT(*)
+FROM visit
+```
+
+### 6.2
+
+```{sql connection=con}
+SELECT patient_id, COUNT(*) as num_visits
+FROM visit
+GROUP BY patient_id
+```
+
+### 6.3
+
+```{sql connection=con}
+SELECT patient_id, COUNT(*) as num_visits
+FROM visit
+GROUP BY patient_id
+ORDER BY num_visits DESC
+```
+
+### 6.4
+
+```{sql connection=con}
+SELECT patient_id, COUNT(*) as num_visits
+FROM visit
+GROUP BY patient_id
+HAVING num_visits >= 40
+ORDER BY num_visits DESC
+```
+
+## Exercise 7
+
+```{sql connection=con}
+SELECT MAX(amount) as max, MIN(amount) as min, AVG(amount) as average, SUM(amount) as sum
+FROM payment
+```
+
+### 7.1
+
+```{sql connection=con}
+SELECT patient_id, MAX(amount) as max, MIN(amount) as min, AVG(amount) as average, SUM(amount) as sum
+FROM payment
+GROUP BY patient_id
+```
+
+### 7.2
+
+```{sql connection=con}
+SELECT patient_id, MAX(amount) as max, MIN(amount) as min, AVG(amount) as average, SUM(amount) as sum
+FROM payment
+GROUP BY patient_id
+HAVING COUNT(*) > 5
+```
+
+## Exercise 8
+
+### 8.1
+
+```{sql connection=con}
+SELECT doctor.doctor_id, first_name, last_name,
+  AVG(julianday(visit_end_date) - julianday(visit_start_date)) AS avg_duration
+FROM doctor
+INNER JOIN visit ON doctor.doctor_id = visit.doctor_id
+GROUP BY doctor.doctor_id
+```
+
+```{sql connection=con}
+SELECT *
+FROM (
+  SELECT doctor.doctor_id, first_name,last_name,
+    AVG(julianday(visit_end_date) - julianday(visit_start_date)) AS avg_duration
+  FROM doctor
+  INNER JOIN visit ON doctor.doctor_id = visit.doctor_id
+  GROUP BY doctor.doctor_id, first_name, last_name
+  ORDER BY avg_duration 
+  LIMIT 5
+)
+UNION ALL
+SELECT *
+FROM (
+  SELECT doctor.doctor_id, first_name, last_name,
+    AVG(julianday(visit_end_date) - julianday(visit_start_date)) AS avg_duration
+  FROM doctor
+  INNER JOIN visit ON doctor.doctor_id = visit.doctor_id
+  GROUP BY doctor.doctor_id, first_name, last_name
+  ORDER BY avg_duration DESC
+  LIMIT 5
+)
+```
+
+## Cleanup
+
+```{r}
+dbDisconnect(con)
+```
