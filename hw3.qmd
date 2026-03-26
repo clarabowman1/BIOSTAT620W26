@@ -1,0 +1,148 @@
+---
+title: "HW3"
+author: "Clara Bowman"
+format: html
+editor: visual
+embed-resources: true
+---
+
+```{r}
+library(dplyr)
+library(knitr)
+library(tidytext)
+library(ggplot2)
+library(textdata)
+```
+
+```{r}
+pubmed <- read.csv('pubmed.csv')
+```
+
+# Text Mining
+
+## 1. Most Common Words
+
+### Number of Abstracts for Each Search Term
+
+```{r}
+table(pubmed$term)
+```
+
+There are 5 search terms with between 317 and 981 abstracts.
+
+### Tokenize Abstracts
+
+```{r}
+tokens <- pubmed %>%
+  unnest_tokens(token, abstract)
+tokens %>% count(token, sort=TRUE) %>% head(10)
+```
+
+The most common tokens are stop words. 'covid' and '19' are the most common tokens that are not stop words.
+
+### Top 5 words by search term
+
+```{r}
+tokens %>%
+  group_by(term) %>%
+  count(token) %>%
+  top_n(5,n) 
+```
+
+Most of the top 5 words for each term are stop words. Covid includes 'covid' and '19' and 'prostate' and 'cancer' are among the top 5 words for prostate cancer.
+
+## 2. Removing Stop Words
+
+```{r}
+tokens_no_stop <- tokens %>%
+  anti_join(stop_words, by=c('token'='word')) 
+tokens_no_stop %>%
+  count(token, sort=TRUE) %>% head(10)
+```
+
+Stop words have been removed, so 'covid', '19', 'patients', 'cancer' and 'prostate' are the 5 most common words overall, and most words seem to be medically relevant.
+
+### Top 5 words by search term (no stop words)
+
+```{r}
+tokens_no_stop %>%
+  group_by(term) %>%
+  count(token) %>%
+  top_n(5,n) 
+```
+
+Almost all of the most common words are different now that stop words are removed. Each search term's top 5 most common words are specific to the disease. The only word that is common in multiple terms is 'patients'.
+
+## 3. Tokenize into bigrams
+
+```{r}
+bigrams <- pubmed %>%
+  unnest_ngrams(bigram, abstract, n=2) %>%
+  count(bigram, sort=TRUE)
+bigrams %>%
+  top_n(n = 10, wt = n) %>%
+  ggplot(aes(x = n, y = reorder(bigram, n), fill = bigram)) + 
+  geom_col() +
+  scale_fill_brewer(palette = "Paired") + 
+  labs(title = "Top 10 Most Frequent Bigrams", y = "Bi-gram") + 
+  theme(legend.position = 'none')
+```
+
+## 4. TF-IDF By Search Term
+
+```{r}
+tf_idf<-tokens %>%
+  count(token,term) %>%
+  bind_tf_idf(token, term, n) %>%
+  arrange(term, desc(tf_idf))
+  
+tf_idf %>%
+  group_by(term) %>%
+  top_n(5, tf_idf)
+```
+
+This list does not include stop words. Each term's top 5 words seem specific to that term which makes sense as words that come up less frequently in other search terms are given a higher tf-idf.
+
+# Sentiment Analysis
+
+## 5. Using NRC Lexicon
+
+```{r warning=FALSE}
+nrc_counts <- pubmed %>%
+  unnest_tokens(word, abstract) %>%
+  inner_join(get_sentiments('nrc'), by='word') %>%
+  count(term, sentiment, sort = TRUE)
+nrc_counts %>% 
+  group_by(term) %>%
+  top_n(1, n)
+```
+
+"Negative" is the most common sentiment for meningitis and prostate cancer; "positive" is the most common sentiment for covid, cystic fibrosis and preclampsia.
+
+```{r}
+nrc_counts %>% 
+  filter(sentiment!='positive' & sentiment!='negative') %>% 
+  group_by(term) %>%
+  top_n(1, n)
+```
+
+The most common sentiment excluding 'positive' and 'negative' is fear for prostate cancer, covid, and meningitis, anticipation for preeclampsia and disgust for cystic fibrosis.
+
+## 6. Using AFINN Library
+
+```{r}
+afinn_abstract_avg <- pubmed %>%
+  mutate(abstract_num = row_number()) %>%
+  unnest_tokens(word, abstract) %>%
+  inner_join(get_sentiments('afinn'), by='word') %>%
+  group_by(abstract_num) %>%
+  summarise(avg_sentiment=mean(value),
+            term=first(term))
+ggplot(afinn_abstract_avg, aes(x=term, y=avg_sentiment, fill=term)) +
+  geom_boxplot() +
+  labs(title='Average Abstract Sentiment by Search Term',x='Term',y='Average Sentiment') +
+  scale_fill_brewer(palette = "Paired")+
+  theme(legend.position = 'none')
+```
+
+All of the search terms except cystic fibrosis have an average sentiment across abstracts of slightly below zero. Cystic fibrosis stands out as the only mean above zero – abstracts for this term tend to be more positive than the rest. Additionally, prostate cancer's abstracts have a much tighter range of average sentiment values than other terms.
