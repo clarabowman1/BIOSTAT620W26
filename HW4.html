@@ -1,0 +1,1481 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.6.42">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Clara Bowman">
+
+<title>HW4</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="HW4_files/libs/clipboard/clipboard.min.js"></script>
+<script src="HW4_files/libs/quarto-html/quarto.js"></script>
+<script src="HW4_files/libs/quarto-html/popper.min.js"></script>
+<script src="HW4_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="HW4_files/libs/quarto-html/anchor.min.js"></script>
+<link href="HW4_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="HW4_files/libs/quarto-html/quarto-syntax-highlighting-2f5df379a58b258e96c21c0638c20c03.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="HW4_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="HW4_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="HW4_files/libs/bootstrap/bootstrap-c0367b04c37547644fece4185067e4a7.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="HW4_files/libs/htmltools-fill-0.5.8.1/fill.css" rel="stylesheet">
+<script src="HW4_files/libs/htmlwidgets-1.6.4/htmlwidgets.js"></script>
+<script src="HW4_files/libs/plotly-binding-4.12.0/plotly.js"></script>
+<script src="HW4_files/libs/typedarray-0.1/typedarray.min.js"></script>
+<script src="HW4_files/libs/jquery-3.5.1/jquery.min.js"></script>
+<link href="HW4_files/libs/crosstalk-1.2.2/css/crosstalk.min.css" rel="stylesheet">
+<script src="HW4_files/libs/crosstalk-1.2.2/js/crosstalk.min.js"></script>
+<link href="HW4_files/libs/plotly-htmlwidgets-css-2.25.2/plotly-htmlwidgets.css" rel="stylesheet">
+<script src="HW4_files/libs/plotly-main-2.25.2/plotly-latest.min.js"></script>
+
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">HW4</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Clara Bowman </p>
+          </div>
+  </div>
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(RSQLite)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(DBI)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(plotly)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'plotly'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following object is masked from 'package:ggplot2':
+
+    last_plot</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following object is masked from 'package:stats':
+
+    filter</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following object is masked from 'package:graphics':
+
+    layout</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(microbenchmark)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(parallel)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="hpc" class="level1">
+<h1>HPC</h1>
+<section id="question-1" class="level2">
+<h2 class="anchored" data-anchor-id="question-1">Question 1</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># running cumulative sum by row</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>fun2 <span class="ot">&lt;-</span> <span class="cf">function</span>(mat) {</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  n <span class="ot">&lt;-</span> <span class="fu">nrow</span>(mat)</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  k <span class="ot">&lt;-</span> <span class="fu">ncol</span>(mat)</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  ans <span class="ot">&lt;-</span> mat</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>n) {</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> (j <span class="cf">in</span> <span class="dv">2</span><span class="sc">:</span>k) {</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>      ans[i,j] <span class="ot">&lt;-</span> mat[i, j] <span class="sc">+</span> ans[i, j <span class="sc">-</span> <span class="dv">1</span>]</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>  ans</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>fun2alt <span class="ot">&lt;-</span> <span class="cf">function</span>(mat) {</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">t</span>(<span class="fu">apply</span>(mat, <span class="dv">1</span>, cumsum))</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="test-function" class="level4">
+<h4 class="anchored" data-anchor-id="test-function">Test function</h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Use the functions with this data</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">2315</span>)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">rnorm</span>(<span class="dv">200</span> <span class="sc">*</span> <span class="dv">100</span>), <span class="at">nrow =</span> <span class="dv">200</span>)</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="fu">microbenchmark</span>(</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">fun2 =</span> <span class="fu">fun2</span>(dat),</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">fun2alt =</span> <span class="fu">fun2alt</span>(dat),</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">times =</span> <span class="dv">1000</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in microbenchmark(fun2 = fun2(dat), fun2alt = fun2alt(dat), times =
+1000): less accurate nanosecond times to avoid potential integer overflows</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Unit: microseconds
+    expr      min        lq      mean   median       uq       max neval
+    fun2 1191.091 1251.9760 1315.2901 1263.169 1286.436 12311.193  1000
+ fun2alt  227.222  280.3785  400.3739  295.692  314.224  7537.932  1000</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>result <span class="ot">&lt;-</span> <span class="fu">fun2</span>(dat)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>resultalt <span class="ot">&lt;-</span> <span class="fu">fun2alt</span>(dat)</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="co">#should sum to zero if outputs are same</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(result<span class="sc">-</span>resultalt) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0</code></pre>
+</div>
+</div>
+<p>The two functions have the same output. The alternate (vectorized) function typically works 2-4 times faster than the original function. However, the max duration of the test is sometimes higher for the alternate function due to outlying high times (likely due to overhead and not computational limits).</p>
+</section>
+</section>
+<section id="question-2" class="level2">
+<h2 class="anchored" data-anchor-id="question-2">Question 2</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>fun3 <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  out <span class="ot">&lt;-</span> <span class="fu">numeric</span>(<span class="fu">length</span>(x))</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  cumsum_x <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="fu">seq_along</span>(x)) {</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (x[i] <span class="sc">==</span> <span class="dv">0</span>) {</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>      cumsum_x <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">else</span> {</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>      cumsum_x <span class="ot">&lt;-</span> cumsum_x <span class="sc">+</span> x[i] </span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>    out[i] <span class="ot">&lt;-</span> cumsum_x</span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>  out</span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>fun3alt <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>  cumsum <span class="ot">&lt;-</span> <span class="fu">cumsum</span>(x)                </span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>  reset <span class="ot">&lt;-</span> <span class="fu">cummax</span>((x <span class="sc">==</span> <span class="dv">0</span>) <span class="sc">*</span> cumsum) </span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a>  cumsum <span class="sc">-</span> reset                      </span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="dv">0</span><span class="sc">:</span><span class="dv">10</span>, <span class="dv">20</span>, <span class="at">replace =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="dv">0</span><span class="sc">:</span><span class="dv">10</span>, <span class="dv">100</span>, <span class="at">replace =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(<span class="fu">fun3</span>(x)<span class="sc">-</span><span class="fu">fun3alt</span>(x))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(<span class="fu">fun3</span>(y)<span class="sc">-</span><span class="fu">fun3alt</span>(y))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0</code></pre>
+</div>
+</div>
+<p>The outputs of the two functions are the same (the difference of the outputs are zero).</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">microbenchmark</span>(</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">fun3 =</span> <span class="fu">fun3</span>(x),</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">fun3alt =</span> <span class="fu">fun3alt</span>(x),</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">times =</span> <span class="dv">1000</span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Unit: nanoseconds
+    expr  min   lq     mean median   uq  max neval
+    fun3 1394 1476 1502.978   1476 1517 4674  1000
+ fun3alt  369  451  495.936    451  492 4387  1000</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">microbenchmark</span>(</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">fun3 =</span> <span class="fu">fun3</span>(y),</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">fun3alt =</span> <span class="fu">fun3alt</span>(y),</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">times =</span> <span class="dv">1000</span></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Unit: microseconds
+    expr   min    lq     mean median    uq    max neval
+    fun3 5.371 5.535 5.780672  5.576 5.617 55.719  1000
+ fun3alt 1.025 1.148 1.404783  1.189 1.271 24.764  1000</code></pre>
+</div>
+</div>
+<p>The median fun3alt time is about 3-4 times less than the median fun3 time. fun3alt occasionly has very high outlying run times (once again likely due to overhead instead of computation) that can falsely inflate the mean time.</p>
+</section>
+<section id="question-3" class="level2">
+<h2 class="anchored" data-anchor-id="question-3">Question 3</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>sim_pi <span class="ot">&lt;-</span> <span class="cf">function</span>(<span class="at">n =</span> <span class="dv">1000</span>, <span class="at">i =</span> <span class="cn">NULL</span>) {</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  p <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">runif</span>(n<span class="sc">*</span><span class="dv">2</span>), <span class="at">ncol =</span> <span class="dv">2</span>)</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mean</span>(<span class="fu">rowSums</span>(p<span class="sc">^</span><span class="dv">2</span>) <span class="sc">&lt;</span> <span class="dv">1</span>) <span class="sc">*</span> <span class="dv">4</span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Here is an example of the run</span></span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">156</span>)</span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a><span class="fu">sim_pi</span>(<span class="dv">1000</span>) <span class="co"># 3.132</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 3.132</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1231</span>)</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="fu">system.time</span>({</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>  ans <span class="ot">&lt;-</span> <span class="fu">unlist</span>(<span class="fu">lapply</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">4000</span>, sim_pi, <span class="at">n =</span> <span class="dv">10000</span>))</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(<span class="fu">mean</span>(ans))</span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 3.14124</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   user  system elapsed 
+  0.694   0.135   0.854 </code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>cl <span class="ot">&lt;-</span> <span class="fu">makeCluster</span>(<span class="dv">4</span>)</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="fu">clusterSetRNGStream</span>(cl, <span class="dv">123</span>)</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a><span class="fu">clusterExport</span>(cl, <span class="st">"sim_pi"</span>)</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a><span class="fu">system.time</span>({</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>  ans2 <span class="ot">&lt;-</span> <span class="fu">unlist</span>(<span class="fu">parLapply</span>(cl, <span class="dv">1</span><span class="sc">:</span><span class="dv">4000</span>, sim_pi, <span class="at">n =</span> <span class="dv">10000</span>))</span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(<span class="fu">mean</span>(ans))</span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 3.14124</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   user  system elapsed 
+  0.001   0.001   0.505 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">stopCluster</span>(cl)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The total elapsed time is about half when using 4 cores instead of 1.</p>
+<section id="plot-estimate-distribution" class="level4">
+<h4 class="anchored" data-anchor-id="plot-estimate-distribution">Plot Estimate Distribution</h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot.new</span>()</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">density</span>(ans), <span class="at">col =</span> <span class="st">"tomato"</span>, <span class="at">lwd =</span> <span class="dv">2</span>, </span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"Density of Pi Estimates"</span>, <span class="at">xlab =</span> <span class="st">"Estimate"</span>)</span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(<span class="fu">density</span>(ans2), <span class="at">col =</span> <span class="st">"steelblue"</span>, <span class="at">lwd =</span> <span class="dv">2</span>, <span class="at">lty=</span><span class="dv">2</span>)</span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a><span class="fu">legend</span>(<span class="st">"topright"</span>,</span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a>       <span class="at">legend =</span> <span class="fu">c</span>(<span class="st">"Sequential"</span>, <span class="st">"Parallel"</span>),</span>
+<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a>       <span class="at">col =</span> <span class="fu">c</span>(<span class="st">"tomato"</span>, <span class="st">"steelblue"</span>), <span class="at">lwd =</span> <span class="dv">2</span>, <span class="at">lty=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="HW4_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Both functions follow a very similar distribution of estimates for pi. The estimates are normally distributed and centered around about 3.14 (true value of pi) and most estimates lie between 3.10 and 3.18.</p>
+</section>
+<section id="plot-time-distribution" class="level4">
+<h4 class="anchored" data-anchor-id="plot-time-distribution">Plot Time Distribution</h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Entire cell takes about 1 minute or so since each system tim is run 30 times</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>t1 <span class="ot">&lt;-</span> <span class="fu">replicate</span>(<span class="dv">30</span>,<span class="fu">system.time</span>({</span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>  ans <span class="ot">&lt;-</span> <span class="fu">unlist</span>(<span class="fu">lapply</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">4000</span>, sim_pi, <span class="at">n =</span> <span class="dv">10000</span>))</span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>})[<span class="st">'elapsed'</span>])</span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>cl <span class="ot">&lt;-</span> <span class="fu">makeCluster</span>(<span class="dv">4</span>)</span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a><span class="fu">clusterSetRNGStream</span>(cl, <span class="dv">123</span>)</span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a><span class="fu">clusterExport</span>(cl, <span class="st">"sim_pi"</span>)</span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a>t2 <span class="ot">&lt;-</span> <span class="fu">replicate</span>(<span class="dv">30</span>, <span class="fu">system.time</span>({</span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a>  ans2 <span class="ot">&lt;-</span> <span class="fu">unlist</span>(<span class="fu">parLapply</span>(cl, <span class="dv">1</span><span class="sc">:</span><span class="dv">4000</span>, sim_pi, <span class="at">n =</span> <span class="dv">10000</span>))</span>
+<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a>})[<span class="st">'elapsed'</span>])</span>
+<span id="cb32-11"><a href="#cb32-11" aria-hidden="true" tabindex="-1"></a><span class="fu">stopCluster</span>(cl)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">boxplot</span>(t1, t2,</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>        <span class="at">names =</span> <span class="fu">c</span>(<span class="st">"Sequential"</span>, <span class="st">"Parallel"</span>),</span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>        <span class="at">col =</span> <span class="fu">c</span>(<span class="st">"tomato"</span>, <span class="st">"steelblue"</span>),</span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>        <span class="at">main =</span> <span class="st">"Runtime Comparison"</span>,</span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>        <span class="at">ylab =</span> <span class="st">"Seconds"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="HW4_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>In 30 pi estimation tests, parallel computing always takes less time than sequential. The sequential version takes on average about 0.8 to 0.9 secons whil the parallelized version takes about 0.4 seconds. Parallel computing also has less variation in elapsed time.</p>
+</section>
+</section>
+</section>
+<section id="sql" class="level1">
+<h1>SQL</h1>
+<section id="setup" class="level2">
+<h2 class="anchored" data-anchor-id="setup">Setup</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Initialize a temporary in memory database</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>con <span class="ot">&lt;-</span> <span class="fu">dbConnect</span>(<span class="fu">SQLite</span>(), <span class="st">":memory:"</span>)</span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Read in tables</span></span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>plots <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">'plots.csv'</span>)</span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>species <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">'species.csv'</span>)</span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>surveys <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">'surveys.csv'</span>)</span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Copy data.frames to database</span></span>
+<span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a><span class="fu">dbWriteTable</span>(con, <span class="st">"plots"</span>, plots)</span>
+<span id="cb34-11"><a href="#cb34-11" aria-hidden="true" tabindex="-1"></a><span class="fu">dbWriteTable</span>(con, <span class="st">"species"</span>, species)</span>
+<span id="cb34-12"><a href="#cb34-12" aria-hidden="true" tabindex="-1"></a><span class="fu">dbWriteTable</span>(con, <span class="st">"surveys"</span>, surveys)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="question-4" class="level2">
+<h2 class="anchored" data-anchor-id="question-4">Question 4</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>PRAGMA table_info(surveys)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>9 records</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">cid</th>
+<th style="text-align: left;">name</th>
+<th style="text-align: left;">type</th>
+<th style="text-align: right;">notnull</th>
+<th style="text-align: left;">dflt_value</th>
+<th style="text-align: right;">pk</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">record_id</td>
+<td style="text-align: left;">INTEGER</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">month</td>
+<td style="text-align: left;">INTEGER</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">2</td>
+<td style="text-align: left;">day</td>
+<td style="text-align: left;">INTEGER</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">3</td>
+<td style="text-align: left;">year</td>
+<td style="text-align: left;">INTEGER</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">4</td>
+<td style="text-align: left;">plot_id</td>
+<td style="text-align: left;">INTEGER</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">5</td>
+<td style="text-align: left;">species_id</td>
+<td style="text-align: left;">TEXT</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">6</td>
+<td style="text-align: left;">sex</td>
+<td style="text-align: left;">TEXT</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">7</td>
+<td style="text-align: left;">hindfoot_length</td>
+<td style="text-align: left;">INTEGER</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">8</td>
+<td style="text-align: left;">weight</td>
+<td style="text-align: left;">INTEGER</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">0</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="dt">month</span>, <span class="dt">day</span>, <span class="dt">year</span>, species_id, weight</span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> surveys</span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> <span class="dt">year</span> <span class="op">=</span> <span class="dv">1999</span></span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a><span class="kw">ORDER</span> <span class="kw">BY</span> species_id</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Displaying records 1 - 10</caption>
+<thead>
+<tr class="header">
+<th style="text-align: right;">month</th>
+<th style="text-align: right;">day</th>
+<th style="text-align: right;">year</th>
+<th style="text-align: left;">species_id</th>
+<th style="text-align: right;">weight</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">17</td>
+<td style="text-align: right;">1999</td>
+<td style="text-align: left;"></td>
+<td style="text-align: right;">NA</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">21</td>
+<td style="text-align: right;">1999</td>
+<td style="text-align: left;"></td>
+<td style="text-align: right;">NA</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">21</td>
+<td style="text-align: right;">1999</td>
+<td style="text-align: left;"></td>
+<td style="text-align: right;">NA</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">21</td>
+<td style="text-align: right;">1999</td>
+<td style="text-align: left;"></td>
+<td style="text-align: right;">NA</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">15</td>
+<td style="text-align: right;">1999</td>
+<td style="text-align: left;"></td>
+<td style="text-align: right;">NA</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">15</td>
+<td style="text-align: right;">1999</td>
+<td style="text-align: left;"></td>
+<td style="text-align: right;">NA</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">15</td>
+<td style="text-align: right;">1999</td>
+<td style="text-align: left;"></td>
+<td style="text-align: right;">NA</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">17</td>
+<td style="text-align: right;">1999</td>
+<td style="text-align: left;"></td>
+<td style="text-align: right;">NA</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">18</td>
+<td style="text-align: right;">1999</td>
+<td style="text-align: left;"></td>
+<td style="text-align: right;">NA</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">18</td>
+<td style="text-align: right;">1999</td>
+<td style="text-align: left;"></td>
+<td style="text-align: right;">NA</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="question-5" class="level2">
+<h2 class="anchored" data-anchor-id="question-5">Question 5</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> species_id, <span class="fu">AVG</span>(weight) <span class="kw">AS</span> avg_weight, <span class="fu">MIN</span>(weight) <span class="kw">as</span> min_weight, <span class="fu">MAX</span>(weight) <span class="kw">as</span> min_weight</span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> surveys</span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a><span class="kw">GROUP</span> <span class="kw">BY</span> species_id</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Displaying records 1 - 10</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">species_id</th>
+<th style="text-align: right;">avg_weight</th>
+<th style="text-align: right;">min_weight</th>
+<th style="text-align: right;">min_weight</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">AB</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">AH</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">AS</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">BA</td>
+<td style="text-align: right;">8.6</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">18</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">CB</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">CM</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">CQ</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">CS</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">CT</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> species_id, <span class="fu">AVG</span>(weight) <span class="kw">AS</span> avg_weight, <span class="fu">MIN</span>(weight) <span class="kw">AS</span> min_weight, <span class="fu">MAX</span>(weight) <span class="kw">AS</span> max_weight</span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> surveys</span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> weight <span class="op">&gt;=</span> <span class="dv">5</span> <span class="kw">AND</span> weight <span class="op">&lt;=</span> <span class="dv">10</span></span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a><span class="kw">GROUP</span> <span class="kw">BY</span> species_id</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Displaying records 1 - 10</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">species_id</th>
+<th style="text-align: right;">avg_weight</th>
+<th style="text-align: right;">min_weight</th>
+<th style="text-align: right;">max_weight</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">BA</td>
+<td style="text-align: right;">8.050000</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">10</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">DM</td>
+<td style="text-align: right;">10.000000</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">10</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">OL</td>
+<td style="text-align: right;">10.000000</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">10</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">OT</td>
+<td style="text-align: right;">9.111111</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">10</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">PE</td>
+<td style="text-align: right;">9.200000</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">10</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">PF</td>
+<td style="text-align: right;">7.757412</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">10</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">PL</td>
+<td style="text-align: right;">9.333333</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">10</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">PM</td>
+<td style="text-align: right;">9.142857</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">10</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">PP</td>
+<td style="text-align: right;">9.277778</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">10</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">RF</td>
+<td style="text-align: right;">9.800000</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: right;">10</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="question-6" class="level2">
+<h2 class="anchored" data-anchor-id="question-6">Question 6</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>result_q6 <span class="ot">&lt;-</span> <span class="fu">dbGetQuery</span>(con, <span class="st">"SELECT surveys.species_id, year, species.species, COUNT(*) AS count, AVG(weight) AS avg_weight </span></span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a><span class="st">                              FROM surveys</span></span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a><span class="st">                              INNER JOIN species ON surveys.species_id = species.species_id</span></span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a><span class="st">                              GROUP BY surveys.species_id, year"</span>)</span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(result_q6)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  species_id year   species count avg_weight
+1         AB 1980 bilineata     5         NA
+2         AB 1981 bilineata     7         NA
+3         AB 1982 bilineata    34         NA
+4         AB 1983 bilineata    41         NA
+5         AB 1984 bilineata    12         NA
+6         AB 1985 bilineata    14         NA</code></pre>
+</div>
+</div>
+</section>
+<section id="question-7" class="level2">
+<h2 class="anchored" data-anchor-id="question-7">Question 7</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>PRAGMA table_info(species)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>4 records</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">cid</th>
+<th style="text-align: left;">name</th>
+<th style="text-align: left;">type</th>
+<th style="text-align: right;">notnull</th>
+<th style="text-align: left;">dflt_value</th>
+<th style="text-align: right;">pk</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">species_id</td>
+<td style="text-align: left;">TEXT</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">genus</td>
+<td style="text-align: left;">TEXT</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">2</td>
+<td style="text-align: left;">species</td>
+<td style="text-align: left;">TEXT</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">3</td>
+<td style="text-align: left;">taxa</td>
+<td style="text-align: left;">TEXT</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">0</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> taxa, <span class="fu">COUNT</span>(<span class="op">*</span>) <span class="kw">AS</span> num_species</span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> species</span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a><span class="kw">GROUP</span> <span class="kw">BY</span> taxa</span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a><span class="kw">HAVING</span> num_species <span class="op">&gt;</span> <span class="dv">10</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>2 records</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">taxa</th>
+<th style="text-align: right;">num_species</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Bird</td>
+<td style="text-align: right;">13</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Rodent</td>
+<td style="text-align: right;">31</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="question-8" class="level2">
+<h2 class="anchored" data-anchor-id="question-8">Question 8</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>PRAGMA table_info(plots)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>2 records</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">cid</th>
+<th style="text-align: left;">name</th>
+<th style="text-align: left;">type</th>
+<th style="text-align: right;">notnull</th>
+<th style="text-align: left;">dflt_value</th>
+<th style="text-align: right;">pk</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">plot_id</td>
+<td style="text-align: left;">INTEGER</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">plot_type</td>
+<td style="text-align: left;">TEXT</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">0</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>result_q8 <span class="ot">&lt;-</span> <span class="fu">dbGetQuery</span>(con, <span class="st">"SELECT genus, surveys.plot_id, COUNT(*) AS count</span></span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a><span class="st">FROM surveys</span></span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a><span class="st">INNER JOIN species ON surveys.species_id = species.species_id</span></span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a><span class="st">GROUP BY genus, surveys.plot_id</span></span>
+<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a><span class="st">ORDER BY surveys.plot_id, count DESC"</span>)</span>
+<span id="cb44-6"><a href="#cb44-6" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(result_q8)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>        genus plot_id count
+1   Dipodomys       1  1330
+2 Chaetodipus       1   332
+3   Onychomys       1   153
+4     Neotoma       1    54
+5 Perognathus       1    34
+6  Peromyscus       1    28</code></pre>
+</div>
+</div>
+</section>
+<section id="question-9" class="level2">
+<h2 class="anchored" data-anchor-id="question-9">Question 9</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> species.species, plots.plot_type, <span class="fu">COUNT</span>(<span class="op">*</span>) <span class="kw">AS</span> <span class="fu">COUNT</span></span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> surveys </span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a><span class="kw">INNER</span> <span class="kw">JOIN</span> species <span class="kw">ON</span> surveys.species_id <span class="op">=</span> species.species_id</span>
+<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a><span class="kw">INNER</span> <span class="kw">JOIN</span> plots <span class="kw">ON</span> surveys.plot_id <span class="op">=</span> plots.plot_id</span>
+<span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a><span class="kw">GROUP</span> <span class="kw">BY</span> species.species, plots.plot_type</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Displaying records 1 - 10</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">species</th>
+<th style="text-align: left;">plot_type</th>
+<th style="text-align: right;">COUNT</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">albigula</td>
+<td style="text-align: left;">Control</td>
+<td style="text-align: right;">610</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">albigula</td>
+<td style="text-align: left;">Long-term Krat Exclosure</td>
+<td style="text-align: right;">166</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">albigula</td>
+<td style="text-align: left;">Rodent Exclosure</td>
+<td style="text-align: right;">147</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">albigula</td>
+<td style="text-align: left;">Short-term Krat Exclosure</td>
+<td style="text-align: right;">252</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">albigula</td>
+<td style="text-align: left;">Spectab exclosure</td>
+<td style="text-align: right;">77</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">audubonii</td>
+<td style="text-align: left;">Control</td>
+<td style="text-align: right;">29</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">audubonii</td>
+<td style="text-align: left;">Long-term Krat Exclosure</td>
+<td style="text-align: right;">17</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">audubonii</td>
+<td style="text-align: left;">Rodent Exclosure</td>
+<td style="text-align: right;">24</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">audubonii</td>
+<td style="text-align: left;">Short-term Krat Exclosure</td>
+<td style="text-align: right;">2</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">audubonii</td>
+<td style="text-align: left;">Spectab exclosure</td>
+<td style="text-align: right;">3</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="question-10" class="level2">
+<h2 class="anchored" data-anchor-id="question-10">Question 10</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> species, <span class="fu">AVG</span>(weight) <span class="kw">as</span> avg_weight</span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> surveys</span>
+<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a><span class="kw">INNER</span> <span class="kw">JOIN</span> species <span class="kw">ON</span> surveys.species_id <span class="op">=</span> species.species_id</span>
+<span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> taxa <span class="op">=</span> <span class="st">'Rodent'</span></span>
+<span id="cb47-5"><a href="#cb47-5" aria-hidden="true" tabindex="-1"></a><span class="kw">GROUP</span> <span class="kw">BY</span> species</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Displaying records 1 - 10</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">species</th>
+<th style="text-align: right;">avg_weight</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">albigula</td>
+<td style="text-align: right;">159.245660</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">baileyi</td>
+<td style="text-align: right;">31.735943</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">eremicus</td>
+<td style="text-align: right;">21.586508</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">flavus</td>
+<td style="text-align: right;">7.923127</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">fulvescens</td>
+<td style="text-align: right;">13.386667</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">fulviventer</td>
+<td style="text-align: right;">58.878049</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">harrisi</td>
+<td style="text-align: right;">NA</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">hispidus</td>
+<td style="text-align: right;">65.563953</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">intermedius</td>
+<td style="text-align: right;">19.250000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">leucogaster</td>
+<td style="text-align: right;">31.575258</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="question-11" class="level2">
+<h2 class="anchored" data-anchor-id="question-11">Question 11</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>p1 <span class="ot">&lt;-</span> result_q8 <span class="sc">%&gt;%</span></span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(plot_id <span class="sc">&lt;=</span> <span class="dv">5</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span><span class="fu">factor</span>(plot_id), <span class="at">y=</span>count, <span class="at">fill=</span>genus)) <span class="sc">+</span> </span>
+<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat=</span><span class="st">'identity'</span>, <span class="at">position =</span> <span class="st">'stack'</span>) <span class="sc">+</span></span>
+<span id="cb48-5"><a href="#cb48-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">'Plot ID'</span>, <span class="at">y=</span><span class="st">"Number of Samples"</span>, <span class="at">fill=</span><span class="st">'Genus'</span>, <span class="at">title=</span><span class="st">'Number of Samples per Genus in Plots 1-5'</span>)</span>
+<span id="cb48-6"><a href="#cb48-6" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplotly</span>(p1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="plotly html-widget html-fill-item" id="htmlwidget-6a7a00b67e2ed77c4949" style="width:100%;height:464px;"></div>
+<script type="application/json" data-for="htmlwidget-6a7a00b67e2ed77c4949">{"x":{"data":[{"orientation":"v","width":[0.89999999999999991,0.90000000000000013,0.90000000000000036,0.90000000000000036,0.90000000000000036],"base":[1982,2184,1806,1958,1147],"x":[1,2,3,4,5],"y":[7,7,2,2,3],"text":["factor(plot_id): 1<br />count:    7<br />genus: Ammospermophilus","factor(plot_id): 2<br />count:    7<br />genus: Ammospermophilus","factor(plot_id): 3<br />count:    2<br />genus: Ammospermophilus","factor(plot_id): 4<br />count:    2<br />genus: Ammospermophilus","factor(plot_id): 5<br />count:    3<br />genus: Ammospermophilus"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(248,118,109,1)","line":{"width":1.8897637795275593,"color":"transparent"}},"name":"Ammospermophilus","legendgroup":"Ammospermophilus","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":[0.89999999999999991,0.90000000000000013,0.90000000000000036,0.90000000000000036,0.90000000000000036],"base":[1975,2170,1796,1955,1145],"x":[1,2,3,4,5],"y":[7,14,10,3,2],"text":["factor(plot_id): 1<br />count:    7<br />genus: Amphispiza","factor(plot_id): 2<br />count:   14<br />genus: Amphispiza","factor(plot_id): 3<br />count:   10<br />genus: Amphispiza","factor(plot_id): 4<br />count:    3<br />genus: Amphispiza","factor(plot_id): 5<br />count:    2<br />genus: Amphispiza"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(233,132,44,1)","line":{"width":1.8897637795275593,"color":"transparent"}},"name":"Amphispiza","legendgroup":"Amphispiza","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":[0.89999999999999991,0.90000000000000013,0.90000000000000036,0.90000000000000036],"base":[1974,2169,1777,1141],"x":[1,2,3,5],"y":[1,1,19,4],"text":["factor(plot_id): 1<br />count:    1<br />genus: Baiomys","factor(plot_id): 2<br />count:    1<br />genus: Baiomys","factor(plot_id): 3<br />count:   19<br />genus: Baiomys","factor(plot_id): 5<br />count:    4<br />genus: Baiomys"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(214,145,0,1)","line":{"width":1.8897637795275593,"color":"transparent"}},"name":"Baiomys","legendgroup":"Baiomys","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":[0.90000000000000013,0.90000000000000036],"base":[2168,1774],"x":[2,3],"y":[1,3],"text":["factor(plot_id): 2<br />count:    1<br />genus: Calamospiza","factor(plot_id): 3<br />count:    3<br />genus: Calamospiza"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(188,157,0,1)","line":{"width":1.8897637795275593,"color":"transparent"}},"name":"Calamospiza","legendgroup":"Calamospiza","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":[0.90000000000000013,0.90000000000000036,0.90000000000000036],"base":[2167,1773,1139],"x":[2,3,5],"y":[1,1,2],"text":["factor(plot_id): 2<br />count:    1<br />genus: Callipepla","factor(plot_id): 3<br />count:    1<br />genus: Callipepla","factor(plot_id): 5<br />count:    2<br />genus: Callipepla"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(156,167,0,1)","line":{"width":1.8897637795275593,"color":"transparent"}},"name":"Callipepla","legendgroup":"Callipepla","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":[0.90000000000000036,0.90000000000000036,0.90000000000000036],"base":[1772,1954,1138],"x":[3,4,5],"y":[1,1,1],"text":["factor(plot_id): 3<br />count:    1<br />genus: Campylorhynchus","factor(plot_id): 4<br />count:    1<br />genus: Campylorhynchus","factor(plot_id): 5<br />count:    1<br />genus: Campylorhynchus"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(111,176,0,1)","line":{"width":1.8897637795275593,"color":"transparent"}},"name":"Campylorhynchus","legendgroup":"Campylorhynchus","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":[0.89999999999999991,0.90000000000000013,0.90000000000000036,0.90000000000000036,0.90000000000000036],"base":[1642,1809,1057,1741,1079],"x":[1,2,3,4,5],"y":[332,358,715,213,59],"text":["factor(plot_id): 1<br />count:  332<br />genus: Chaetodipus","factor(plot_id): 2<br />count:  358<br />genus: Chaetodipus","factor(plot_id): 3<br />count:  715<br />genus: Chaetodipus","factor(plot_id): 4<br />count:  213<br />genus: Chaetodipus","factor(plot_id): 5<br />count:   59<br />genus: Chaetodipus"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(0,184,19,1)","line":{"width":1.8897637795275593,"color":"transparent"}},"name":"Chaetodipus","legendgroup":"Chaetodipus","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":[0.89999999999999991,0.90000000000000013,0.90000000000000036,0.90000000000000036,0.90000000000000036],"base":[312,777,849,324,467],"x":[1,2,3,4,5],"y":[1330,1032,208,1417,612],"text":["factor(plot_id): 1<br />count: 1330<br />genus: Dipodomys","factor(plot_id): 2<br />count: 1032<br />genus: Dipodomys","factor(plot_id): 3<br />count:  208<br />genus: Dipodomys","factor(plot_id): 4<br />count: 1417<br />genus: Dipodomys","factor(plot_id): 5<br />count:  612<br />genus: Dipodomys"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(0,189,97,1)","line":{"width":1.8897637795275593,"color":"transparent"}},"name":"Dipodomys","legendgroup":"Dipodomys","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":0.90000000000000013,"base":776,"x":[2],"y":[1],"text":"factor(plot_id): 2<br />count:    1<br />genus: Lizard","type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(0,192,142,1)","line":{"width":1.8897637795275593,"color":"transparent"}},"name":"Lizard","legendgroup":"Lizard","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":[0.89999999999999991,0.90000000000000013,0.90000000000000036,0.90000000000000036,0.90000000000000036],"base":[258,575,752,318,439],"x":[1,2,3,4,5],"y":[54,201,97,6,28],"text":["factor(plot_id): 1<br />count:   54<br />genus: Neotoma","factor(plot_id): 2<br />count:  201<br />genus: Neotoma","factor(plot_id): 3<br />count:   97<br />genus: Neotoma","factor(plot_id): 4<br />count:    6<br />genus: Neotoma","factor(plot_id): 5<br />count:   28<br />genus: Neotoma"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(0,192,180,1)","line":{"width":1.8897637795275593,"color":"transparent"}},"name":"Neotoma","legendgroup":"Neotoma","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":[0.89999999999999991,0.90000000000000013,0.90000000000000036,0.90000000000000036,0.90000000000000036],"base":[105,311,534,185,254],"x":[1,2,3,4,5],"y":[153,264,218,133,185],"text":["factor(plot_id): 1<br />count:  153<br />genus: Onychomys","factor(plot_id): 2<br />count:  264<br />genus: Onychomys","factor(plot_id): 3<br />count:  218<br />genus: Onychomys","factor(plot_id): 4<br />count:  133<br />genus: Onychomys","factor(plot_id): 5<br />count:  185<br />genus: Onychomys"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(0,189,212,1)","line":{"width":1.8897637795275593,"color":"transparent"}},"name":"Onychomys","legendgroup":"Onychomys","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":[0.89999999999999991,0.90000000000000013,0.90000000000000036,0.90000000000000036,0.90000000000000036],"base":[71,290,403,49,213],"x":[1,2,3,4,5],"y":[34,21,131,136,41],"text":["factor(plot_id): 1<br />count:   34<br />genus: Perognathus","factor(plot_id): 2<br />count:   21<br />genus: Perognathus","factor(plot_id): 3<br />count:  131<br />genus: Perognathus","factor(plot_id): 4<br />count:  136<br />genus: Perognathus","factor(plot_id): 5<br />count:   41<br />genus: Perognathus"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(0,181,238,1)","line":{"width":1.8897637795275593,"color":"transparent"}},"name":"Perognathus","legendgroup":"Perognathus","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":[0.89999999999999991,0.90000000000000013,0.90000000000000036,0.90000000000000036,0.90000000000000036],"base":[43,108,295,44,128],"x":[1,2,3,4,5],"y":[28,182,108,5,85],"text":["factor(plot_id): 1<br />count:   28<br />genus: Peromyscus","factor(plot_id): 2<br />count:  182<br />genus: Peromyscus","factor(plot_id): 3<br />count:  108<br />genus: Peromyscus","factor(plot_id): 4<br />count:    5<br />genus: Peromyscus","factor(plot_id): 5<br />count:   85<br />genus: Peromyscus"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(0,167,255,1)","line":{"width":1.8897637795275593,"color":"transparent"}},"name":"Peromyscus","legendgroup":"Peromyscus","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":[0.89999999999999991,0.90000000000000013,0.90000000000000036,0.90000000000000036],"base":[39,107,293,43],"x":[1,2,3,4],"y":[4,1,2,1],"text":["factor(plot_id): 1<br />count:    4<br />genus: Pipilo","factor(plot_id): 2<br />count:    1<br />genus: Pipilo","factor(plot_id): 3<br />count:    2<br />genus: Pipilo","factor(plot_id): 4<br />count:    1<br />genus: Pipilo"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(127,150,255,1)","line":{"width":1.8897637795275593,"color":"transparent"}},"name":"Pipilo","legendgroup":"Pipilo","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":[0.89999999999999991,0.90000000000000013,0.90000000000000036,0.90000000000000036,0.90000000000000036],"base":[15,34,80,24,16],"x":[1,2,3,4,5],"y":[24,73,213,19,112],"text":["factor(plot_id): 1<br />count:   24<br />genus: Reithrodontomys","factor(plot_id): 2<br />count:   73<br />genus: Reithrodontomys","factor(plot_id): 3<br />count:  213<br />genus: Reithrodontomys","factor(plot_id): 4<br />count:   19<br />genus: Reithrodontomys","factor(plot_id): 5<br />count:  112<br />genus: Reithrodontomys"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(188,129,255,1)","line":{"width":1.8897637795275593,"color":"transparent"}},"name":"Reithrodontomys","legendgroup":"Reithrodontomys","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":[0.89999999999999991,0.90000000000000013],"base":[14,33],"x":[1,2],"y":[1,1],"text":["factor(plot_id): 1<br />count:    1<br />genus: Rodent","factor(plot_id): 2<br />count:    1<br />genus: Rodent"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(226,110,247,1)","line":{"width":1.8897637795275593,"color":"transparent"}},"name":"Rodent","legendgroup":"Rodent","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":[0.90000000000000013,0.90000000000000036,0.90000000000000036,0.90000000000000036],"base":[10,22,22,13],"x":[2,3,4,5],"y":[23,58,2,3],"text":["factor(plot_id): 2<br />count:   23<br />genus: Sigmodon","factor(plot_id): 3<br />count:   58<br />genus: Sigmodon","factor(plot_id): 4<br />count:    2<br />genus: Sigmodon","factor(plot_id): 5<br />count:    3<br />genus: Sigmodon"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(247,99,223,1)","line":{"width":1.8897637795275593,"color":"transparent"}},"name":"Sigmodon","legendgroup":"Sigmodon","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":[0.89999999999999991,0.90000000000000013,0.90000000000000036,0.90000000000000036,0.90000000000000036],"base":[2,3,5,0,1],"x":[1,2,3,4,5],"y":[12,7,17,22,12],"text":["factor(plot_id): 1<br />count:   12<br />genus: Spermophilus","factor(plot_id): 2<br />count:    7<br />genus: Spermophilus","factor(plot_id): 3<br />count:   17<br />genus: Spermophilus","factor(plot_id): 4<br />count:   22<br />genus: Spermophilus","factor(plot_id): 5<br />count:   12<br />genus: Spermophilus"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(255,98,191,1)","line":{"width":1.8897637795275593,"color":"transparent"}},"name":"Spermophilus","legendgroup":"Spermophilus","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":[0.89999999999999991,0.90000000000000013,0.90000000000000036,0.90000000000000036],"base":[0,0,0,0],"x":[1,2,3,5],"y":[2,3,5,1],"text":["factor(plot_id): 1<br />count:    2<br />genus: Sylvilagus","factor(plot_id): 2<br />count:    3<br />genus: Sylvilagus","factor(plot_id): 3<br />count:    5<br />genus: Sylvilagus","factor(plot_id): 5<br />count:    1<br />genus: Sylvilagus"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(255,106,154,1)","line":{"width":1.8897637795275593,"color":"transparent"}},"name":"Sylvilagus","legendgroup":"Sylvilagus","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":40.840182648401829,"r":7.3059360730593621,"b":37.260273972602747,"l":48.949771689497723},"plot_bgcolor":"rgba(235,235,235,1)","paper_bgcolor":"rgba(255,255,255,1)","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724},"title":{"text":"Number of Samples per Genus in Plots 1-5","font":{"color":"rgba(0,0,0,1)","family":"","size":17.534246575342465},"x":0,"xref":"paper"},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[0.40000000000000002,5.5999999999999996],"tickmode":"array","ticktext":["1","2","3","4","5"],"tickvals":[1,2,3,4,5],"categoryorder":"array","categoryarray":["1","2","3","4","5"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.6529680365296811,"tickwidth":0.66417600664176002,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.68949771689498},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(255,255,255,1)","gridwidth":0.66417600664176002,"zeroline":false,"anchor":"y","title":{"text":"Plot ID","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-109.55000000000001,2300.5500000000002],"tickmode":"array","ticktext":["0","500","1000","1500","2000"],"tickvals":[1.4210854715202004e-14,499.99999999999994,1000,1500,2000.0000000000002],"categoryorder":"array","categoryarray":["0","500","1000","1500","2000"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.6529680365296811,"tickwidth":0.66417600664176002,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.68949771689498},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(255,255,255,1)","gridwidth":0.66417600664176002,"zeroline":false,"anchor":"x","title":{"text":"Number of Samples","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"shapes":[],"showlegend":true,"legend":{"bgcolor":"rgba(255,255,255,1)","bordercolor":"transparent","borderwidth":1.8897637795275593,"font":{"color":"rgba(0,0,0,1)","family":"","size":11.68949771689498},"title":{"text":"Genus","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}}},"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"source":"A","attrs":{"f06b33f7cd96":{"x":{},"y":{},"fill":{},"type":"bar"}},"cur_data":"f06b33f7cd96","visdat":{"f06b33f7cd96":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+</section>
+<section id="question-12" class="level2">
+<h2 class="anchored" data-anchor-id="question-12">Question 12</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>result_q6 <span class="sc">%&gt;%</span></span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot_ly</span>(<span class="at">x=</span><span class="sc">~</span>year, <span class="at">y=</span><span class="sc">~</span>avg_weight, <span class="at">color=</span><span class="sc">~</span>species_id, <span class="at">type=</span><span class="st">'scatter'</span>,<span class="at">mode=</span><span class="st">'lines'</span>, </span>
+<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a>          <span class="at">connectgaps=</span><span class="cn">TRUE</span>, <span class="co">#Connect non sequential points </span></span>
+<span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a>          <span class="at">line =</span> <span class="fu">list</span>(<span class="at">shape =</span> <span class="st">"spline"</span>), <span class="co">#Smooth lines to reduce noise</span></span>
+<span id="cb49-5"><a href="#cb49-5" aria-hidden="true" tabindex="-1"></a>          <span class="at">text =</span> <span class="sc">~</span><span class="fu">paste</span>(<span class="st">"Species:"</span>, species, <span class="st">"&lt;br&gt;ID:"</span>, species_id),</span>
+<span id="cb49-6"><a href="#cb49-6" aria-hidden="true" tabindex="-1"></a>          <span class="at">hovertemplate =</span> <span class="fu">paste</span>(<span class="st">"%{text}&lt;br&gt;"</span>,<span class="st">"Year: %{x}&lt;br&gt;"</span>, <span class="st">"Avg Weight: %{y}&lt;extra&gt;&lt;/extra&gt;"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb49-7"><a href="#cb49-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">layout</span>(<span class="at">title =</span> <span class="st">"Average Weight of Species over Time"</span>, <span class="at">xaxis =</span> <span class="fu">list</span>(<span class="at">title =</span> <span class="st">"Year"</span>), <span class="at">yaxis =</span> <span class="fu">list</span>(<span class="at">title =</span> <span class="st">"Average Weight"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="plotly html-widget html-fill-item" id="htmlwidget-0b3678cc2d68efe28786" style="width:100%;height:464px;"></div>
+<script type="application/json" data-for="htmlwidget-0b3678cc2d68efe28786">{"x":{"visdat":{"f06b68ac78cb":["function () ","plotlyVisDat"]},"cur_data":"f06b68ac78cb","attrs":{"f06b68ac78cb":{"x":{},"y":{},"mode":"lines","connectgaps":true,"line":{"shape":"spline"},"text":{},"hovertemplate":"%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","color":{},"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"scatter"}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"title":"Average Weight of Species over Time","xaxis":{"domain":[0,1],"automargin":true,"title":"Year"},"yaxis":{"domain":[0,1],"automargin":true,"title":"Average Weight"},"hovermode":"closest","showlegend":true},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"data":[{"x":[1989,1990,1991,1992],"y":[7,8,9.2400000000000002,7.833333333333333],"mode":"lines","connectgaps":true,"line":{"color":"rgba(102,194,165,1)","shape":"spline"},"text":["Species: taylori <br>ID: BA","Species: taylori <br>ID: BA","Species: taylori <br>ID: BA","Species: taylori <br>ID: BA"],"hovertemplate":["%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>"],"type":"scatter","name":"BA","marker":{"color":"rgba(102,194,165,1)","line":{"color":"rgba(102,194,165,1)"}},"textfont":{"color":"rgba(102,194,165,1)"},"error_y":{"color":"rgba(102,194,165,1)"},"error_x":{"color":"rgba(102,194,165,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[1977,1978,1979,1980,1981,1982,1983,1984,1985,1986,1987,1988,1989,1990,1991,1992,1993,1994,1995,1996,1997,1998,1999,2000,2001,2002],"y":[41.141304347826086,40.795454545454547,43.507317073170732,44.136082474226804,44.032906764168189,41.975041597337771,40.944550669216063,40.765306122448976,41.50764525993884,43.361596009975059,43.232608695652175,43.39779005524862,44.349206349206348,41.769911504424776,43.148337595907925,43.877966101694916,43.373983739837399,42.373287671232873,44.806146572104019,44.506172839506171,44.708551483420592,43.13140311804009,43.945402298850574,43.126637554585152,45.442176870748298,46.168316831683171],"mode":"lines","connectgaps":true,"line":{"color":"rgba(163,182,145,1)","shape":"spline"},"text":["Species: merriami <br>ID: DM","Species: merriami <br>ID: DM","Species: merriami <br>ID: DM","Species: merriami <br>ID: DM","Species: merriami <br>ID: DM","Species: merriami <br>ID: DM","Species: merriami <br>ID: DM","Species: merriami <br>ID: DM","Species: merriami <br>ID: DM","Species: merriami <br>ID: DM","Species: merriami <br>ID: DM","Species: merriami <br>ID: DM","Species: merriami <br>ID: DM","Species: merriami <br>ID: DM","Species: merriami <br>ID: DM","Species: merriami <br>ID: DM","Species: merriami <br>ID: DM","Species: merriami <br>ID: DM","Species: merriami <br>ID: DM","Species: merriami <br>ID: DM","Species: merriami <br>ID: DM","Species: merriami <br>ID: DM","Species: merriami <br>ID: DM","Species: merriami <br>ID: DM","Species: merriami <br>ID: DM","Species: merriami <br>ID: DM"],"hovertemplate":["%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>"],"type":"scatter","name":"DM","marker":{"color":"rgba(163,182,145,1)","line":{"color":"rgba(163,182,145,1)"}},"textfont":{"color":"rgba(163,182,145,1)"},"error_y":{"color":"rgba(163,182,145,1)"},"error_x":{"color":"rgba(163,182,145,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[1977,1978,1979,1980,1981,1982,1983,1984,1985,1986,1987,1988,1989,1990,1991,1992,1993,1994,1995,1996,1997,1998,1999,2000,2001,2002],"y":[42.666666666666664,45,45.862068965517238,48.058823529411768,49.111111111111114,47.919642857142854,47.150602409638552,48.415094339622641,47.956730769230766,49.372727272727275,50.087378640776699,51.463768115942031,51.025641025641029,48.512048192771083,49.695652173913047,48.367816091954026,48.46153846153846,47.75,49.592592592592595,47.234939759036145,48.177865612648219,49.731182795698928,48.012048192771083,49.224719101123597,52.233766233766232,49.514403292181072],"mode":"lines","connectgaps":true,"line":{"color":"rgba(204,167,126,1)","shape":"spline"},"text":["Species: ordii <br>ID: DO","Species: ordii <br>ID: DO","Species: ordii <br>ID: DO","Species: ordii <br>ID: DO","Species: ordii <br>ID: DO","Species: ordii <br>ID: DO","Species: ordii <br>ID: DO","Species: ordii <br>ID: DO","Species: ordii <br>ID: DO","Species: ordii <br>ID: DO","Species: ordii <br>ID: DO","Species: ordii <br>ID: DO","Species: ordii <br>ID: DO","Species: ordii <br>ID: DO","Species: ordii <br>ID: DO","Species: ordii <br>ID: DO","Species: ordii <br>ID: DO","Species: ordii <br>ID: DO","Species: ordii <br>ID: DO","Species: ordii <br>ID: DO","Species: ordii <br>ID: DO","Species: ordii <br>ID: DO","Species: ordii <br>ID: DO","Species: ordii <br>ID: DO","Species: ordii <br>ID: DO","Species: ordii <br>ID: DO"],"hovertemplate":["%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>"],"type":"scatter","name":"DO","marker":{"color":"rgba(204,167,126,1)","line":{"color":"rgba(204,167,126,1)"}},"textfont":{"color":"rgba(204,167,126,1)"},"error_y":{"color":"rgba(204,167,126,1)"},"error_x":{"color":"rgba(204,167,126,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[1977,1978,1979,1980,1981,1982,1983,1984,1985,1986,1987,1988,1989,1990,1991,1992,1993,1994,1997,1998,1999],"y":[121.4375,115.1986531986532,111.79695431472081,120.72566371681415,125.81844380403459,115.64792899408285,122.03308823529412,124.08219178082192,124.32631578947368,128.07142857142858,126.38383838383838,129.49056603773585,121.89655172413794,121.1875,113,112.35294117647059,105.72222222222223,106.625,111,116,120.71428571428571],"mode":"lines","connectgaps":true,"line":{"color":"rgba(239,150,106,1)","shape":"spline"},"text":["Species: spectabilis <br>ID: DS","Species: spectabilis <br>ID: DS","Species: spectabilis <br>ID: DS","Species: spectabilis <br>ID: DS","Species: spectabilis <br>ID: DS","Species: spectabilis <br>ID: DS","Species: spectabilis <br>ID: DS","Species: spectabilis <br>ID: DS","Species: spectabilis <br>ID: DS","Species: spectabilis <br>ID: DS","Species: spectabilis <br>ID: DS","Species: spectabilis <br>ID: DS","Species: spectabilis <br>ID: DS","Species: spectabilis <br>ID: DS","Species: spectabilis <br>ID: DS","Species: spectabilis <br>ID: DS","Species: spectabilis <br>ID: DS","Species: spectabilis <br>ID: DS","Species: spectabilis <br>ID: DS","Species: spectabilis <br>ID: DS","Species: spectabilis <br>ID: DS"],"hovertemplate":["%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>"],"type":"scatter","name":"DS","marker":{"color":"rgba(239,150,106,1)","line":{"color":"rgba(239,150,106,1)"}},"textfont":{"color":"rgba(239,150,106,1)"},"error_y":{"color":"rgba(239,150,106,1)"},"error_x":{"color":"rgba(239,150,106,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[1978,1979,1980,1981,1982,1983,1984,1985,1986,1987,1988,1989,1990,1991,1992,1993,1994,1995,1996,1997,1998,1999,2000,2001,2002],"y":[184.65625,138,158.98214285714286,165.90322580645162,160.61320754716982,156.69148936170214,150.0952380952381,148.82926829268294,159.72413793103448,158.84,163.10416666666666,151.27868852459017,154.27586206896552,148.78571428571428,139,127.39130434782609,186.875,155.83333333333334,148,150.6888888888889,159.46666666666667,182.19999999999999,179.30769230769232,167.85106382978722,182.15909090909091],"mode":"lines","connectgaps":true,"line":{"color":"rgba(238,145,116,1)","shape":"spline"},"text":["Species: albigula <br>ID: NL","Species: albigula <br>ID: NL","Species: albigula <br>ID: NL","Species: albigula <br>ID: NL","Species: albigula <br>ID: NL","Species: albigula <br>ID: NL","Species: albigula <br>ID: NL","Species: albigula <br>ID: NL","Species: albigula <br>ID: NL","Species: albigula <br>ID: NL","Species: albigula <br>ID: NL","Species: albigula <br>ID: NL","Species: albigula <br>ID: NL","Species: albigula <br>ID: NL","Species: albigula <br>ID: NL","Species: albigula <br>ID: NL","Species: albigula <br>ID: NL","Species: albigula <br>ID: NL","Species: albigula <br>ID: NL","Species: albigula <br>ID: NL","Species: albigula <br>ID: NL","Species: albigula <br>ID: NL","Species: albigula <br>ID: NL","Species: albigula <br>ID: NL","Species: albigula <br>ID: NL"],"hovertemplate":["%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>"],"type":"scatter","name":"NL","marker":{"color":"rgba(238,145,116,1)","line":{"color":"rgba(238,145,116,1)"}},"textfont":{"color":"rgba(238,145,116,1)"},"error_y":{"color":"rgba(238,145,116,1)"},"error_x":{"color":"rgba(238,145,116,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[1977,1978,1979,1980,1981,1982,1983,1984,1985,1986,1987,1988,1989,1990,1991,1992,1993,1994,1995,1996,1997,2002],"y":[21.666666666666668,31.027027027027028,33.717391304347828,33.107142857142854,33.296296296296298,35.590361445783131,34.584615384615383,32.550724637681157,32.108695652173914,30.88095238095238,30.779220779220779,30.306122448979593,31.94736842105263,31.199999999999999,28.171428571428571,28.454545454545453,27.545454545454547,21.899999999999999,27.296296296296298,27.76923076923077,33.625,25.428571428571427],"mode":"lines","connectgaps":true,"line":{"color":"rgba(211,151,147,1)","shape":"spline"},"text":["Species: leucogaster <br>ID: OL","Species: leucogaster <br>ID: OL","Species: leucogaster <br>ID: OL","Species: leucogaster <br>ID: OL","Species: leucogaster <br>ID: OL","Species: leucogaster <br>ID: OL","Species: leucogaster <br>ID: OL","Species: leucogaster <br>ID: OL","Species: leucogaster <br>ID: OL","Species: leucogaster <br>ID: OL","Species: leucogaster <br>ID: OL","Species: leucogaster <br>ID: OL","Species: leucogaster <br>ID: OL","Species: leucogaster <br>ID: OL","Species: leucogaster <br>ID: OL","Species: leucogaster <br>ID: OL","Species: leucogaster <br>ID: OL","Species: leucogaster <br>ID: OL","Species: leucogaster <br>ID: OL","Species: leucogaster <br>ID: OL","Species: leucogaster <br>ID: OL","Species: leucogaster <br>ID: OL"],"hovertemplate":["%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>"],"type":"scatter","name":"OL","marker":{"color":"rgba(211,151,147,1)","line":{"color":"rgba(211,151,147,1)"}},"textfont":{"color":"rgba(211,151,147,1)"},"error_y":{"color":"rgba(211,151,147,1)"},"error_x":{"color":"rgba(211,151,147,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[1977,1978,1979,1980,1981,1982,1983,1984,1985,1986,1987,1988,1989,1990,1991,1992,1993,1994,1995,1996,1997,1998,1999,2000,2001,2002],"y":[21,23.219999999999999,23.075757575757574,24.083333333333332,24.415384615384614,24.925531914893618,24.697674418604652,22.416666666666668,22.06451612903226,21.5,23.069767441860463,24.070588235294117,24.663366336633665,23.675324675324674,24.588235294117649,24.928571428571427,22.363636363636363,25.285714285714285,24.868421052631579,23.453703703703702,24.78515625,24.675675675675677,25.723809523809525,25.30344827586207,23.707792207792206,23.833333333333332],"mode":"lines","connectgaps":true,"line":{"color":"rgba(178,156,177,1)","shape":"spline"},"text":["Species: torridus <br>ID: OT","Species: torridus <br>ID: OT","Species: torridus <br>ID: OT","Species: torridus <br>ID: OT","Species: torridus <br>ID: OT","Species: torridus <br>ID: OT","Species: torridus <br>ID: OT","Species: torridus <br>ID: OT","Species: torridus <br>ID: OT","Species: torridus <br>ID: OT","Species: torridus <br>ID: OT","Species: torridus <br>ID: OT","Species: torridus <br>ID: OT","Species: torridus <br>ID: OT","Species: torridus <br>ID: OT","Species: torridus <br>ID: OT","Species: torridus <br>ID: OT","Species: torridus <br>ID: OT","Species: torridus <br>ID: OT","Species: torridus <br>ID: OT","Species: torridus <br>ID: OT","Species: torridus <br>ID: OT","Species: torridus <br>ID: OT","Species: torridus <br>ID: OT","Species: torridus <br>ID: OT","Species: torridus <br>ID: OT"],"hovertemplate":["%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>"],"type":"scatter","name":"OT","marker":{"color":"rgba(178,156,177,1)","line":{"color":"rgba(178,156,177,1)"}},"textfont":{"color":"rgba(178,156,177,1)"},"error_y":{"color":"rgba(178,156,177,1)"},"error_x":{"color":"rgba(178,156,177,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[1977,null,1982,1984,1989],"y":[21.333333333333332,null,24,18,20],"mode":"lines","connectgaps":true,"line":{"color":"rgba(146,159,203,1)","shape":"spline"},"text":["Species: sp. <br>ID: OX",null,"Species: sp. <br>ID: OX","Species: sp. <br>ID: OX","Species: sp. <br>ID: OX"],"hovertemplate":["%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>",null,"%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>"],"type":"scatter","name":"OX","marker":{"color":"rgba(146,159,203,1)","line":{"color":"rgba(146,159,203,1)"}},"textfont":{"color":"rgba(146,159,203,1)"},"error_y":{"color":"rgba(146,159,203,1)"},"error_x":{"color":"rgba(146,159,203,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[1995,1996,1997,1998,1999,2000,2001,2002],"y":[34,32.578947368421055,31.085603112840467,30.082236842105264,31.71003717472119,30.878899082568807,32.798850574712645,32.359447004608292],"mode":"lines","connectgaps":true,"line":{"color":"rgba(175,154,200,1)","shape":"spline"},"text":["Species: baileyi <br>ID: PB","Species: baileyi <br>ID: PB","Species: baileyi <br>ID: PB","Species: baileyi <br>ID: PB","Species: baileyi <br>ID: PB","Species: baileyi <br>ID: PB","Species: baileyi <br>ID: PB","Species: baileyi <br>ID: PB"],"hovertemplate":["%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>"],"type":"scatter","name":"PB","marker":{"color":"rgba(175,154,200,1)","line":{"color":"rgba(175,154,200,1)"}},"textfont":{"color":"rgba(175,154,200,1)"},"error_y":{"color":"rgba(175,154,200,1)"},"error_x":{"color":"rgba(175,154,200,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[1977,1978,1979,1980,1981,1982,1983,1984,1985,1986,1987,1988,1989,1990,1991,1992,1993,1994,1995,1996,1997,1998,1999,2000,2001,2002],"y":[19.5,20.428571428571427,20.529411764705884,22.449999999999999,20.558139534883722,21.173076923076923,20.864864864864863,20.210526315789473,20.359999999999999,22.52,21.625899280575538,22.62566844919786,21.935672514619885,21.671232876712327,21.43548387096774,22.75,19.23076923076923,18,21.23076923076923,22.027777777777779,20.92982456140351,20.304347826086957,25.428571428571427,21.615384615384617,20.399999999999999,21.719298245614034],"mode":"lines","connectgaps":true,"line":{"color":"rgba(201,148,198,1)","shape":"spline"},"text":["Species: eremicus <br>ID: PE","Species: eremicus <br>ID: PE","Species: eremicus <br>ID: PE","Species: eremicus <br>ID: PE","Species: eremicus <br>ID: PE","Species: eremicus <br>ID: PE","Species: eremicus <br>ID: PE","Species: eremicus <br>ID: PE","Species: eremicus <br>ID: PE","Species: eremicus <br>ID: PE","Species: eremicus <br>ID: PE","Species: eremicus <br>ID: PE","Species: eremicus <br>ID: PE","Species: eremicus <br>ID: PE","Species: eremicus <br>ID: PE","Species: eremicus <br>ID: PE","Species: eremicus <br>ID: PE","Species: eremicus <br>ID: PE","Species: eremicus <br>ID: PE","Species: eremicus <br>ID: PE","Species: eremicus <br>ID: PE","Species: eremicus <br>ID: PE","Species: eremicus <br>ID: PE","Species: eremicus <br>ID: PE","Species: eremicus <br>ID: PE","Species: eremicus <br>ID: PE"],"hovertemplate":["%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>"],"type":"scatter","name":"PE","marker":{"color":"rgba(201,148,198,1)","line":{"color":"rgba(201,148,198,1)"}},"textfont":{"color":"rgba(201,148,198,1)"},"error_y":{"color":"rgba(201,148,198,1)"},"error_x":{"color":"rgba(201,148,198,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[1977,1978,1979,1980,1981,1982,1983,1984,null,1986,1987,1988,1989,1990,1991,1992,1993,1994,1995,1996,1997,1998,2001,2002],"y":[7.1739130434782608,7.0882352941176467,7.5294117647058822,7.4555555555555557,7.1525423728813555,6.9189189189189193,6.833333333333333,7.4285714285714288,null,8,7.5,8,7.2307692307692308,7.117647058823529,7.8275862068965516,8.7678571428571423,8.2388059701492544,7.8550724637681162,8.7806451612903231,8.3938461538461535,8.4486486486486481,8.7200000000000006,8.5384615384615383,7.3888888888888893],"mode":"lines","connectgaps":true,"line":{"color":"rgba(224,140,196,1)","shape":"spline"},"text":["Species: flavus <br>ID: PF","Species: flavus <br>ID: PF","Species: flavus <br>ID: PF","Species: flavus <br>ID: PF","Species: flavus <br>ID: PF","Species: flavus <br>ID: PF","Species: flavus <br>ID: PF","Species: flavus <br>ID: PF",null,"Species: flavus <br>ID: PF","Species: flavus <br>ID: PF","Species: flavus <br>ID: PF","Species: flavus <br>ID: PF","Species: flavus <br>ID: PF","Species: flavus <br>ID: PF","Species: flavus <br>ID: PF","Species: flavus <br>ID: PF","Species: flavus <br>ID: PF","Species: flavus <br>ID: PF","Species: flavus <br>ID: PF","Species: flavus <br>ID: PF","Species: flavus <br>ID: PF","Species: flavus <br>ID: PF","Species: flavus <br>ID: PF"],"hovertemplate":["%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>",null,"%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>"],"type":"scatter","name":"PF","marker":{"color":"rgba(224,140,196,1)","line":{"color":"rgba(224,140,196,1)"}},"textfont":{"color":"rgba(224,140,196,1)"},"error_y":{"color":"rgba(224,140,196,1)"},"error_x":{"color":"rgba(224,140,196,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[1984,1985,1986,1988,1989,1990,1992,1995,1997],"y":[28,32.666666666666664,39,33,30.5,31.142857142857142,31.142857142857142,35.333333333333336,22],"mode":"lines","connectgaps":true,"line":{"color":"rgba(222,157,174,1)","shape":"spline"},"text":["Species: hispidus <br>ID: PH","Species: hispidus <br>ID: PH","Species: hispidus <br>ID: PH","Species: hispidus <br>ID: PH","Species: hispidus <br>ID: PH","Species: hispidus <br>ID: PH","Species: hispidus <br>ID: PH","Species: hispidus <br>ID: PH","Species: hispidus <br>ID: PH"],"hovertemplate":["%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>"],"type":"scatter","name":"PH","marker":{"color":"rgba(222,157,174,1)","line":{"color":"rgba(222,157,174,1)"}},"textfont":{"color":"rgba(222,157,174,1)"},"error_y":{"color":"rgba(222,157,174,1)"},"error_x":{"color":"rgba(222,157,174,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[1992,null,2001,2002],"y":[18,null,18,20],"mode":"lines","connectgaps":true,"line":{"color":"rgba(205,180,144,1)","shape":"spline"},"text":["Species: intermedius <br>ID: PI",null,"Species: intermedius <br>ID: PI","Species: intermedius <br>ID: PI"],"hovertemplate":["%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>",null,"%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>"],"type":"scatter","name":"PI","marker":{"color":"rgba(205,180,144,1)","line":{"color":"rgba(205,180,144,1)"}},"textfont":{"color":"rgba(205,180,144,1)"},"error_y":{"color":"rgba(205,180,144,1)"},"error_x":{"color":"rgba(205,180,144,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[1995,1996,1997,1998,2000],"y":[22.333333333333332,21.166666666666668,18.789473684210527,16.714285714285715,21],"mode":"lines","connectgaps":true,"line":{"color":"rgba(185,202,111,1)","shape":"spline"},"text":["Species: leucopus <br>ID: PL","Species: leucopus <br>ID: PL","Species: leucopus <br>ID: PL","Species: leucopus <br>ID: PL","Species: leucopus <br>ID: PL"],"hovertemplate":["%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>"],"type":"scatter","name":"PL","marker":{"color":"rgba(185,202,111,1)","line":{"color":"rgba(185,202,111,1)"}},"textfont":{"color":"rgba(185,202,111,1)"},"error_y":{"color":"rgba(185,202,111,1)"},"error_x":{"color":"rgba(185,202,111,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[1978,1979,1980,1981,1982,1983,1984,1985,1986,1987,1988,1989,1995,1996,1997,1998,1999,2000,2001,2002],"y":[20.666666666666668,23.666666666666668,21,19.933333333333334,21.391304347826086,22.023809523809526,19.545454545454547,19,21.696969696969695,22.297709923664122,21.75925925925926,20.222222222222221,27.375,20.224489795918366,21.12639405204461,20.591397849462364,22.523809523809526,20.5,26.666666666666668,19],"mode":"lines","connectgaps":true,"line":{"color":"rgba(174,216,81,1)","shape":"spline"},"text":["Species: maniculatus <br>ID: PM","Species: maniculatus <br>ID: PM","Species: maniculatus <br>ID: PM","Species: maniculatus <br>ID: PM","Species: maniculatus <br>ID: PM","Species: maniculatus <br>ID: PM","Species: maniculatus <br>ID: PM","Species: maniculatus <br>ID: PM","Species: maniculatus <br>ID: PM","Species: maniculatus <br>ID: PM","Species: maniculatus <br>ID: PM","Species: maniculatus <br>ID: PM","Species: maniculatus <br>ID: PM","Species: maniculatus <br>ID: PM","Species: maniculatus <br>ID: PM","Species: maniculatus <br>ID: PM","Species: maniculatus <br>ID: PM","Species: maniculatus <br>ID: PM","Species: maniculatus <br>ID: PM","Species: maniculatus <br>ID: PM"],"hovertemplate":["%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>"],"type":"scatter","name":"PM","marker":{"color":"rgba(174,216,81,1)","line":{"color":"rgba(174,216,81,1)"}},"textfont":{"color":"rgba(174,216,81,1)"},"error_y":{"color":"rgba(174,216,81,1)"},"error_x":{"color":"rgba(174,216,81,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[1977,1978,1979,1980,1981,1982,1983,1984,1985,1986,1987,1988,1989,1990,1991,1992,1993,1994,1995,1996,1997,1998,1999,2000,2001,2002],"y":[15.333333333333334,14.869565217391305,15.105263157894736,14.176470588235293,13.949999999999999,16.125,15.46875,15.307692307692308,15.764705882352942,16.75,17.84090909090909,18.280000000000001,17.40909090909091,16.029411764705884,17.904761904761905,17.479674796747968,17.954022988505749,17.585714285714285,16.844444444444445,18.095563139931741,18.175000000000001,16.266990291262136,16.52121212121212,16.788617886178862,17.752895752895753,17.018617021276597],"mode":"lines","connectgaps":true,"line":{"color":"rgba(202,217,72,1)","shape":"spline"},"text":["Species: penicillatus <br>ID: PP","Species: penicillatus <br>ID: PP","Species: penicillatus <br>ID: PP","Species: penicillatus <br>ID: PP","Species: penicillatus <br>ID: PP","Species: penicillatus <br>ID: PP","Species: penicillatus <br>ID: PP","Species: penicillatus <br>ID: PP","Species: penicillatus <br>ID: PP","Species: penicillatus <br>ID: PP","Species: penicillatus <br>ID: PP","Species: penicillatus <br>ID: PP","Species: penicillatus <br>ID: PP","Species: penicillatus <br>ID: PP","Species: penicillatus <br>ID: PP","Species: penicillatus <br>ID: PP","Species: penicillatus <br>ID: PP","Species: penicillatus <br>ID: PP","Species: penicillatus <br>ID: PP","Species: penicillatus <br>ID: PP","Species: penicillatus <br>ID: PP","Species: penicillatus <br>ID: PP","Species: penicillatus <br>ID: PP","Species: penicillatus <br>ID: PP","Species: penicillatus <br>ID: PP","Species: penicillatus <br>ID: PP"],"hovertemplate":["%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>"],"type":"scatter","name":"PP","marker":{"color":"rgba(202,217,72,1)","line":{"color":"rgba(202,217,72,1)"}},"textfont":{"color":"rgba(202,217,72,1)"},"error_y":{"color":"rgba(202,217,72,1)"},"error_x":{"color":"rgba(202,217,72,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[1997],"y":[19],"mode":"lines","connectgaps":true,"line":{"color":"rgba(227,217,62,1)","shape":"spline"},"text":"Species: sp. <br>ID: PX","hovertemplate":"%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","type":"scatter","name":"PX","marker":{"color":"rgba(227,217,62,1)","line":{"color":"rgba(227,217,62,1)"}},"textfont":{"color":"rgba(227,217,62,1)"},"error_y":{"color":"rgba(227,217,62,1)"},"error_x":{"color":"rgba(227,217,62,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[1982,1988,1989,1990,1997],"y":[11.5,13.818181818181818,13.346938775510203,12.916666666666666,20],"mode":"lines","connectgaps":true,"line":{"color":"rgba(252,217,49,1)","shape":"spline"},"text":["Species: fulvescens <br>ID: RF","Species: fulvescens <br>ID: RF","Species: fulvescens <br>ID: RF","Species: fulvescens <br>ID: RF","Species: fulvescens <br>ID: RF"],"hovertemplate":["%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>"],"type":"scatter","name":"RF","marker":{"color":"rgba(252,217,49,1)","line":{"color":"rgba(252,217,49,1)"}},"textfont":{"color":"rgba(252,217,49,1)"},"error_y":{"color":"rgba(252,217,49,1)"},"error_x":{"color":"rgba(252,217,49,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[1977,1978,1979,1980,1981,1982,1983,1984,1985,1986,1987,1988,1989,1990,1991,1992,1993,1994,1995,1996,1997,1998,1999,2000,2001,2002],"y":[10,7.5,8.3333333333333339,10.227272727272727,11.178571428571429,10.436241610738255,9.8719999999999999,11.152542372881356,8.3714285714285719,10.75,10.657608695652174,10.322115384615385,10.411311053984576,10.305676855895197,10.498305084745763,10.904761904761905,10.747474747474747,10.675000000000001,12.653846153846153,11.455555555555556,11.23076923076923,13.1,10.555555555555555,11.4,11.333333333333334,10],"mode":"lines","connectgaps":true,"line":{"color":"rgba(250,212,80,1)","shape":"spline"},"text":["Species: megalotis <br>ID: RM","Species: megalotis <br>ID: RM","Species: megalotis <br>ID: RM","Species: megalotis <br>ID: RM","Species: megalotis <br>ID: RM","Species: megalotis <br>ID: RM","Species: megalotis <br>ID: RM","Species: megalotis <br>ID: RM","Species: megalotis <br>ID: RM","Species: megalotis <br>ID: RM","Species: megalotis <br>ID: RM","Species: megalotis <br>ID: RM","Species: megalotis <br>ID: RM","Species: megalotis <br>ID: RM","Species: megalotis <br>ID: RM","Species: megalotis <br>ID: RM","Species: megalotis <br>ID: RM","Species: megalotis <br>ID: RM","Species: megalotis <br>ID: RM","Species: megalotis <br>ID: RM","Species: megalotis <br>ID: RM","Species: megalotis <br>ID: RM","Species: megalotis <br>ID: RM","Species: megalotis <br>ID: RM","Species: megalotis <br>ID: RM","Species: megalotis <br>ID: RM"],"hovertemplate":["%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>"],"type":"scatter","name":"RM","marker":{"color":"rgba(250,212,80,1)","line":{"color":"rgba(250,212,80,1)"}},"textfont":{"color":"rgba(250,212,80,1)"},"error_y":{"color":"rgba(250,212,80,1)"},"error_x":{"color":"rgba(250,212,80,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[1991,2002],"y":[11,10.142857142857142],"mode":"lines","connectgaps":true,"line":{"color":"rgba(243,205,109,1)","shape":"spline"},"text":["Species: montanus <br>ID: RO","Species: montanus <br>ID: RO"],"hovertemplate":["%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>"],"type":"scatter","name":"RO","marker":{"color":"rgba(243,205,109,1)","line":{"color":"rgba(243,205,109,1)"}},"textfont":{"color":"rgba(243,205,109,1)"},"error_y":{"color":"rgba(243,205,109,1)"},"error_x":{"color":"rgba(243,205,109,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[1995,1997],"y":[20,11],"mode":"lines","connectgaps":true,"line":{"color":"rgba(234,199,134,1)","shape":"spline"},"text":["Species: sp. <br>ID: RX","Species: sp. <br>ID: RX"],"hovertemplate":["%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>"],"type":"scatter","name":"RX","marker":{"color":"rgba(234,199,134,1)","line":{"color":"rgba(234,199,134,1)"}},"textfont":{"color":"rgba(234,199,134,1)"},"error_y":{"color":"rgba(234,199,134,1)"},"error_x":{"color":"rgba(234,199,134,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[1989,1990,1991,1992,1993,2002],"y":[54.799999999999997,52.611111111111114,93.166666666666671,43,44,62.166666666666664],"mode":"lines","connectgaps":true,"line":{"color":"rgba(223,194,152,1)","shape":"spline"},"text":["Species: fulviventer <br>ID: SF","Species: fulviventer <br>ID: SF","Species: fulviventer <br>ID: SF","Species: fulviventer <br>ID: SF","Species: fulviventer <br>ID: SF","Species: fulviventer <br>ID: SF"],"hovertemplate":["%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>"],"type":"scatter","name":"SF","marker":{"color":"rgba(223,194,152,1)","line":{"color":"rgba(223,194,152,1)"}},"textfont":{"color":"rgba(223,194,152,1)"},"error_y":{"color":"rgba(223,194,152,1)"},"error_x":{"color":"rgba(223,194,152,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[1978,1982,null,1986,1987,1988,1989,1990,1991,1997,1999,2000,2001,2002],"y":[89,79,null,55,73.799999999999997,72.806451612903231,76.345454545454544,76.888888888888886,63,50.857142857142854,54,73.375,79.900000000000006,64.666666666666671],"mode":"lines","connectgaps":true,"line":{"color":"rgba(209,189,161,1)","shape":"spline"},"text":["Species: hispidus <br>ID: SH","Species: hispidus <br>ID: SH",null,"Species: hispidus <br>ID: SH","Species: hispidus <br>ID: SH","Species: hispidus <br>ID: SH","Species: hispidus <br>ID: SH","Species: hispidus <br>ID: SH","Species: hispidus <br>ID: SH","Species: hispidus <br>ID: SH","Species: hispidus <br>ID: SH","Species: hispidus <br>ID: SH","Species: hispidus <br>ID: SH","Species: hispidus <br>ID: SH"],"hovertemplate":["%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>",null,"%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>"],"type":"scatter","name":"SH","marker":{"color":"rgba(209,189,161,1)","line":{"color":"rgba(209,189,161,1)"}},"textfont":{"color":"rgba(209,189,161,1)"},"error_y":{"color":"rgba(209,189,161,1)"},"error_x":{"color":"rgba(209,189,161,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[1991,1992,1993,1994,1997],"y":[53.909090909090907,55.263157894736842,55.600000000000001,62.333333333333336,54.666666666666664],"mode":"lines","connectgaps":true,"line":{"color":"rgba(195,184,170,1)","shape":"spline"},"text":["Species: ochrognathus <br>ID: SO","Species: ochrognathus <br>ID: SO","Species: ochrognathus <br>ID: SO","Species: ochrognathus <br>ID: SO","Species: ochrognathus <br>ID: SO"],"hovertemplate":["%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>","%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>"],"type":"scatter","name":"SO","marker":{"color":"rgba(195,184,170,1)","line":{"color":"rgba(195,184,170,1)"}},"textfont":{"color":"rgba(195,184,170,1)"},"error_y":{"color":"rgba(195,184,170,1)"},"error_x":{"color":"rgba(195,184,170,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[1978,null,1981],"y":[130,null,57],"mode":"lines","connectgaps":true,"line":{"color":"rgba(179,179,179,1)","shape":"spline"},"text":["Species: spilosoma <br>ID: SS",null,"Species: spilosoma <br>ID: SS"],"hovertemplate":["%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>",null,"%{text}<br> Year: %{x}<br> Avg Weight: %{y}<extra><\/extra>"],"type":"scatter","name":"SS","marker":{"color":"rgba(179,179,179,1)","line":{"color":"rgba(179,179,179,1)"}},"textfont":{"color":"rgba(179,179,179,1)"},"error_y":{"color":"rgba(179,179,179,1)"},"error_x":{"color":"rgba(179,179,179,1)"},"xaxis":"x","yaxis":"y","frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

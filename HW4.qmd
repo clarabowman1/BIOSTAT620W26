@@ -1,0 +1,312 @@
+---
+title: "HW4"
+author: "Clara Bowman"
+format: html
+editor: visual
+---
+
+```{r warning=FALSE}
+library(RSQLite)
+library(DBI)
+library(ggplot2)
+library(plotly)
+library(microbenchmark)
+library(parallel)
+```
+
+# HPC
+
+## Question 1
+
+```{r}
+# running cumulative sum by row
+fun2 <- function(mat) {
+  n <- nrow(mat)
+  k <- ncol(mat)
+  ans <- mat
+  for (i in 1:n) {
+    for (j in 2:k) {
+      ans[i,j] <- mat[i, j] + ans[i, j - 1]
+    }
+  }
+  ans
+}
+
+fun2alt <- function(mat) {
+  t(apply(mat, 1, cumsum))
+}
+```
+
+#### Test function
+
+```{r}
+# Use the functions with this data
+set.seed(2315)
+dat <- matrix(rnorm(200 * 100), nrow = 200)
+microbenchmark(
+  fun2 = fun2(dat),
+  fun2alt = fun2alt(dat),
+  times = 1000
+)
+```
+
+```{r}
+result <- fun2(dat)
+resultalt <- fun2alt(dat)
+#should sum to zero if outputs are same
+sum(result-resultalt) 
+```
+
+The two functions have the same output. The alternate (vectorized) function typically works 2-4 times faster than the original function. However, the max duration of the test is sometimes higher for the alternate function due to outlying high times (likely due to overhead and not computational limits).
+
+## Question 2
+
+```{r}
+fun3 <- function(x) {
+  out <- numeric(length(x))
+  cumsum_x <- 0
+  for (i in seq_along(x)) {
+    if (x[i] == 0) {
+      cumsum_x <- 0
+    } else {
+      cumsum_x <- cumsum_x + x[i] 
+    }
+    out[i] <- cumsum_x
+  }
+  out
+}
+
+fun3alt <- function(x) {
+  cumsum <- cumsum(x)                
+  reset <- cummax((x == 0) * cumsum) 
+  cumsum - reset                      
+}
+```
+
+```{r}
+x <- sample(0:10, 20, replace = TRUE)
+y <- sample(0:10, 100, replace = TRUE)
+sum(fun3(x)-fun3alt(x))
+sum(fun3(y)-fun3alt(y))
+```
+
+The outputs of the two functions are the same (the difference of the outputs are zero).
+
+```{r}
+microbenchmark(
+  fun3 = fun3(x),
+  fun3alt = fun3alt(x),
+  times = 1000
+)
+microbenchmark(
+  fun3 = fun3(y),
+  fun3alt = fun3alt(y),
+  times = 1000
+)
+```
+
+The median fun3alt time is about 3-4 times less than the median fun3 time. fun3alt occasionly has very high outlying run times (once again likely due to overhead instead of computation) that can falsely inflate the mean time.
+
+## Question 3
+
+```{r}
+sim_pi <- function(n = 1000, i = NULL) {
+  p <- matrix(runif(n*2), ncol = 2)
+  mean(rowSums(p^2) < 1) * 4
+}
+
+# Here is an example of the run
+set.seed(156)
+sim_pi(1000) # 3.132
+set.seed(1231)
+system.time({
+  ans <- unlist(lapply(1:4000, sim_pi, n = 10000))
+  print(mean(ans))
+})
+
+```
+
+```{r}
+cl <- makeCluster(4)
+clusterSetRNGStream(cl, 123)
+clusterExport(cl, "sim_pi")
+system.time({
+  ans2 <- unlist(parLapply(cl, 1:4000, sim_pi, n = 10000))
+  print(mean(ans))
+})
+stopCluster(cl)
+
+```
+
+The total elapsed time is about half when using 4 cores instead of 1.
+
+#### Plot Estimate Distribution
+
+```{r}
+plot.new()
+plot(density(ans), col = "tomato", lwd = 2, 
+     main = "Density of Pi Estimates", xlab = "Estimate")
+
+lines(density(ans2), col = "steelblue", lwd = 2, lty=2)
+
+legend("topright",
+       legend = c("Sequential", "Parallel"),
+       col = c("tomato", "steelblue"), lwd = 2, lty=c(1,2))
+```
+
+Both functions follow a very similar distribution of estimates for pi. The estimates are normally distributed and centered around about 3.14 (true value of pi) and most estimates lie between 3.10 and 3.18.
+
+#### Plot Time Distribution
+
+```{r}
+#Entire cell takes about 1 minute or so since each system tim is run 30 times
+t1 <- replicate(30,system.time({
+  ans <- unlist(lapply(1:4000, sim_pi, n = 10000))
+})['elapsed'])
+cl <- makeCluster(4)
+clusterSetRNGStream(cl, 123)
+clusterExport(cl, "sim_pi")
+t2 <- replicate(30, system.time({
+  ans2 <- unlist(parLapply(cl, 1:4000, sim_pi, n = 10000))
+})['elapsed'])
+stopCluster(cl)
+```
+
+```{r}
+boxplot(t1, t2,
+        names = c("Sequential", "Parallel"),
+        col = c("tomato", "steelblue"),
+        main = "Runtime Comparison",
+        ylab = "Seconds")
+```
+
+In 30 pi estimation tests, parallel computing always takes less time than sequential. The sequential version takes on average about 0.8 to 0.9 secons whil the parallelized version takes about 0.4 seconds. Parallel computing also has less variation in elapsed time.
+
+# SQL
+
+## Setup
+
+```{r}
+# Initialize a temporary in memory database
+con <- dbConnect(SQLite(), ":memory:")
+
+# Read in tables
+plots <- read.csv('plots.csv')
+species <- read.csv('species.csv')
+surveys <- read.csv('surveys.csv')
+
+# Copy data.frames to database
+dbWriteTable(con, "plots", plots)
+dbWriteTable(con, "species", species)
+dbWriteTable(con, "surveys", surveys)
+```
+
+## Question 4
+
+```{sql, connection=con}
+PRAGMA table_info(surveys)
+```
+
+```{sql, connection=con}
+SELECT month, day, year, species_id, weight
+FROM surveys
+WHERE year = 1999
+ORDER BY species_id
+```
+
+## Question 5
+
+```{sql, connection=con}
+SELECT species_id, AVG(weight) AS avg_weight, MIN(weight) as min_weight, MAX(weight) as min_weight
+FROM surveys
+GROUP BY species_id
+```
+
+```{sql, connection=con}
+SELECT species_id, AVG(weight) AS avg_weight, MIN(weight) AS min_weight, MAX(weight) AS max_weight
+FROM surveys
+WHERE weight >= 5 AND weight <= 10
+GROUP BY species_id
+
+```
+
+## Question 6
+
+```{r}
+result_q6 <- dbGetQuery(con, "SELECT surveys.species_id, year, species.species, COUNT(*) AS count, AVG(weight) AS avg_weight 
+                              FROM surveys
+                              INNER JOIN species ON surveys.species_id = species.species_id
+                              GROUP BY surveys.species_id, year")
+head(result_q6)
+```
+
+## Question 7
+
+```{sql, connection=con}
+PRAGMA table_info(species)
+```
+
+```{sql, connection=con}
+SELECT taxa, COUNT(*) AS num_species
+FROM species
+GROUP BY taxa
+HAVING num_species > 10
+```
+
+## Question 8
+
+```{sql, connection=con}
+PRAGMA table_info(plots)
+```
+
+```{r}
+result_q8 <- dbGetQuery(con, "SELECT genus, surveys.plot_id, COUNT(*) AS count
+FROM surveys
+INNER JOIN species ON surveys.species_id = species.species_id
+GROUP BY genus, surveys.plot_id
+ORDER BY surveys.plot_id, count DESC")
+head(result_q8)
+```
+
+## Question 9
+
+```{sql, connection=con}
+SELECT species.species, plots.plot_type, COUNT(*) AS COUNT
+FROM surveys 
+INNER JOIN species ON surveys.species_id = species.species_id
+INNER JOIN plots ON surveys.plot_id = plots.plot_id
+GROUP BY species.species, plots.plot_type
+```
+
+## Question 10
+
+```{sql, connection=con}
+SELECT species, AVG(weight) as avg_weight
+FROM surveys
+INNER JOIN species ON surveys.species_id = species.species_id
+WHERE taxa = 'Rodent'
+GROUP BY species
+```
+
+## Question 11
+
+```{r}
+p1 <- result_q8 %>%
+  filter(plot_id <= 5) %>%
+  ggplot(aes(x=factor(plot_id), y=count, fill=genus)) + 
+  geom_bar(stat='identity', position = 'stack') +
+  labs(x='Plot ID', y="Number of Samples", fill='Genus', title='Number of Samples per Genus in Plots 1-5')
+ggplotly(p1)
+```
+
+## Question 12
+
+```{r warning=FALSE}
+result_q6 %>%
+  plot_ly(x=~year, y=~avg_weight, color=~species_id, type='scatter',mode='lines', 
+          connectgaps=TRUE, #Connect non sequential points 
+          line = list(shape = "spline"), #Smooth lines to reduce noise
+          text = ~paste("Species:", species, "<br>ID:", species_id),
+          hovertemplate = paste("%{text}<br>","Year: %{x}<br>", "Avg Weight: %{y}<extra></extra>")) %>%
+  layout(title = "Average Weight of Species over Time", xaxis = list(title = "Year"), yaxis = list(title = "Average Weight"))
+```
